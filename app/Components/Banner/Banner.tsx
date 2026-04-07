@@ -21,7 +21,7 @@ export default function Banner() {
                     официальная гарантия и быстрая доставка до вашей двери.
                 </p>
                 <div className="flex items-center gap-4">
-                    <button className="group flex items-center gap-2 rounded-xl bg-gray-900 px-8 py-4 font-medium text-white shadow-lg transition-all hover:bg-gray-800">
+                    <button className="group flex cursor-pointer items-center gap-2 rounded-xl bg-gray-900 px-8 py-4 font-medium text-white shadow-lg transition-all hover:bg-gray-800">
                         В каталог
                         <FaArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                     </button>

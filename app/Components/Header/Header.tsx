@@ -13,15 +13,15 @@ export default function Header() {
                     <h2 className="text-xl font-bold">BBPhones</h2>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                    <button className="flex h-10 w-30 items-center justify-center gap-2 rounded-2xl text-black hover:bg-gray-100">
+                    <button className="flex h-10 w-30 cursor-pointer items-center justify-center gap-2 rounded-2xl text-black hover:bg-gray-100">
                         <FiHome className="h-6 w-6" />
                         <p>Главная</p>
                     </button>
-                    <button className="flex h-10 w-30 items-center justify-center gap-2 rounded-2xl hover:bg-gray-100">
+                    <button className="flex h-10 w-30 cursor-pointer items-center justify-center gap-2 rounded-2xl hover:bg-gray-100">
                         <IoCartOutline className="h-6 w-6" />
                         <p>Корзина</p>
                     </button>
-                    <button className="flex h-10 w-30 items-center justify-center gap-2 rounded-2xl hover:bg-gray-100">
+                    <button className="flex h-10 w-30 cursor-pointer items-center justify-center gap-2 rounded-2xl hover:bg-gray-100">
                         <MdOutlinePersonOutline className="h-6 w-6" />
                         <p>Профиль</p>
                     </button>

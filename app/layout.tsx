@@ -28,10 +28,12 @@ export default function RootLayout({
             lang="ru"
             className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         >
-            <header>
-                <Header />
-            </header>
-            <body className="flex min-h-full flex-col">{children}</body>
+            <body className="flex min-h-full flex-col">
+                <header>
+                    <Header />
+                </header>
+                {children}
+            </body>
         </html>
     );
 }
