@@ -5,8 +5,8 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient(
-    process.env.BBP_URL!,
-    process.env.BBP_KEY!,
+    process.env.NEXT_PUBLIC_BBP_URL!,
+    process.env.NEXT_PUBLIC_BBP_KEY!,
     {
       cookies: {
         getAll() {

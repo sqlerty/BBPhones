@@ -1,9 +1,8 @@
+import PhonesLength from './PhonesLength/PhonesLength';
 export default function SortBar() {
     return (
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pb-5">
-            <p className="font-medium text-gray-500">
-                Показано: <span className="text-gray-900">1</span> товаров
-            </p>
+            <PhonesLength />
             <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500 sm:inline">
                     Сортировка:
