@@ -1,4 +1,7 @@
 import { LuTrash2 } from 'react-icons/lu';
+import CartPhone from './CartPhone/CartPhone';
+import OrderDetails from './OrderDetails/OrderDetails';
+
 export default function Cart() {
     return (
         <div className="bg-gray-50">
@@ -16,6 +19,12 @@ export default function Cart() {
                         <LuTrash2 className="h-4 w-4" />
                         Очистить всё
                     </button>
+                </div>
+                <div className="flex justify-between gap-10 py-10">
+                    <div className="flex flex-col gap-5">
+                        <CartPhone />
+                    </div>
+                    <OrderDetails />
                 </div>
             </div>
         </div>
