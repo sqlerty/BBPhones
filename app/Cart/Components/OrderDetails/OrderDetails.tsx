@@ -3,7 +3,7 @@ import { LuShieldCheck, LuLock } from 'react-icons/lu';
 
 export default function OrderDetails() {
     return (
-        <div className="sticky top-28 flex w-full flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20">
+        <div className="sticky top-28 flex h-1/12 w-full flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20">
             <div className="pb-5">
                 <h2 className="mb-6 text-xl font-bold text-white">
                     Детали заказа

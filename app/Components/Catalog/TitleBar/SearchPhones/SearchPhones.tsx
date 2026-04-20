@@ -4,12 +4,15 @@ import {
     setSearchedPhones,
     useSearchedPhones,
     useSearchWord,
+    useSetInfoPhone,
 } from '@/app/stores/catalogStore';
 import Image from 'next/image';
+import Link from 'next/link';
 export default function SearchPhones() {
     const searchWord = useSearchWord();
     const searchedPhones = useSearchedPhones();
     const setSearchWord = setSearchedPhones;
+    const setInfoPhone = useSetInfoPhone();
     return (
         <div className="w-xl">
             <div className="flex gap-4">
@@ -31,7 +34,7 @@ export default function SearchPhones() {
                             className="flex h-20 w-full justify-between border-b border-b-gray-100 bg-white p-3"
                             key={phone.id}
                         >
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center">
                                 <div className="h-full w-30">
                                     <Image
                                         src={phone.images[0]}
@@ -41,9 +44,15 @@ export default function SearchPhones() {
                                         className="h-full w-full rounded-lg object-contain"
                                     />
                                 </div>
-                                <h2>{phone.name}</h2>
+                                <Link
+                                    href={`/Phone/${phone.id}`}
+                                    className="font-medium transition-colors hover:text-blue-500"
+                                    onClick={() => setInfoPhone(phone)}
+                                >
+                                    {phone.name}
+                                </Link>
                             </div>
-                            <p className="self-center text-xl text-black">
+                            <p className="self-center text-xl font-medium text-black">
                                 {phone.price} Р
                             </p>
                         </div>

@@ -1,9 +1,10 @@
 'use client';
-import { useUser } from '@/app/stores/AuthoRegStore';
+import { useUser, setLogout } from '@/app/stores/AuthoRegStore';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { LuChevronRight, LuShield, LuLogOut } from 'react-icons/lu';
 export default function MainInfo() {
     const user = useUser();
+    const handleLogout = setLogout;
     return (
         <div className="flex w-md flex-col gap-5 rounded-2xl bg-white p-10">
             <div className="flex h-24 w-24 items-center justify-center self-center rounded-full border-4 border-white bg-white shadow-xl shadow-blue-900/5">
@@ -44,7 +45,10 @@ export default function MainInfo() {
                     </div>
                     <LuChevronRight className="h-4 w-4 text-gray-300" />
                 </button>
-                <button className="flex h-14 w-full cursor-pointer items-center justify-between rounded-2xl p-3 font-medium text-rose-600 transition-colors hover:bg-gray-50">
+                <button
+                    onClick={handleLogout}
+                    className="flex h-14 w-full cursor-pointer items-center justify-between rounded-2xl p-3 font-medium text-rose-600 transition-colors hover:bg-gray-50"
+                >
                     <div className="flex items-center gap-4">
                         <LuLogOut className="h-5 w-5" />
                         <p>Выйти из аккаунта</p>

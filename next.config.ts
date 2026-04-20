@@ -5,10 +5,16 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'fdn2.gsmarena.com',
+        hostname: 'c.dns-shop.ru',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.citilink.ru',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };

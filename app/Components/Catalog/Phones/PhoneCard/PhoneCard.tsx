@@ -2,10 +2,14 @@ import { GoStarFill } from 'react-icons/go';
 import { IoCartOutline } from 'react-icons/io5';
 import Image from 'next/image';
 import { ProductWithCategory } from '@/types/database';
+import { useSetCart, useSetInfoPhone } from '@/app/stores/catalogStore';
+import Link from 'next/link';
 interface IPhoneCard {
     phone: ProductWithCategory;
 }
 export default function PhoneCard({ phone }: IPhoneCard) {
+    const setCart = useSetCart();
+    const setInfoPhone = useSetInfoPhone();
     return (
         <div
             key={phone.id}
@@ -17,7 +21,7 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                     width={1000}
                     height={2000}
                     alt="phone"
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-contain transition-all group-hover:h-60"
                 />
             </div>
             <div className="flex flex-col gap-3 bg-white p-5">
@@ -25,9 +29,14 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                     <p className="text-sm text-blue-600 uppercase">
                         {phone.categories?.name}
                     </p>
-                    <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
-                        {phone.name}
-                    </h3>
+                    <Link
+                        href={`/Phone/${phone.id}`}
+                        onClick={() => setInfoPhone(phone)}
+                    >
+                        <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
+                            {phone.name}
+                        </h3>
+                    </Link>
                     <div className="flex h-6 w-15 items-center justify-center gap-2 rounded-2xl bg-gray-50 font-bold">
                         <GoStarFill className="h-3 w-3 text-amber-300" />
                         4.9
@@ -38,7 +47,10 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                         <span className="text-sm text-gray-400">Цена</span>
                         <h4 className="text-lg font-bold">{phone.price} Р</h4>
                     </div>
-                    <button className="transition-al flex items-center justify-center rounded-2xl bg-black px-3 py-3 duration-300 ease-in-out group-hover:-translate-y-1">
+                    <button
+                        onClick={() => setCart(phone)}
+                        className="transition-al flex cursor-pointer items-center justify-center rounded-2xl bg-black px-3 py-3 duration-300 ease-in-out group-hover:-translate-y-1"
+                    >
                         <IoCartOutline className="h-6 w-6 text-white" />
                     </button>
                 </div>

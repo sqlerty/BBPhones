@@ -18,6 +18,7 @@ interface IAutoReg{
     setAPassword: (apass : string) => void;
     handleAuth: (email:string,password:string, router: AppRouterInstance) => Promise<void>;
     handleReg: (email:string,password:string,aPassword:string,router: AppRouterInstance) => Promise<void>;
+    handleLogout: () => Promise<void>;
     isAuth:boolean;
     goToPage: (router: AppRouterInstance, path: string) => void;
     user: IUser | null;
@@ -122,6 +123,20 @@ const AuthoRegStore : StateCreator<IAutoReg,[["zustand/devtools",never],["zustan
             alert('Произошла неизвестная ошибка');
         }
     },
+    handleLogout: async () => {
+        try{
+            const {error} = await supabaseBrowser.auth.signOut();
+            if (error) {
+                alert(`Ошибка: ${error.message}`);
+                return;
+            } 
+            set({user: null,isAuth: false});
+
+        }catch{
+            alert(`Произошла неизвестная ошибка!`)
+        }
+    },
+
     goToPage: (router, path) => {
         router.push(path) 
     }
@@ -149,6 +164,7 @@ export const useSetAPassword = () => useAuthoRegStore((state) => state.setAPassw
 
 export const setAuth = (email:string,password:string,router: AppRouterInstance) => useAuthoRegStore.getState().handleAuth(email,password,router);
 export const setReg = (email:string,password:string,aPassword:string,router: AppRouterInstance) =>  useAuthoRegStore.getState().handleReg(email,password,aPassword,router);
+export const setLogout = () => useAuthoRegStore.getState().handleLogout();
 
 export const useSetPage = () => useAuthoRegStore((state) => state.goToPage);
 
