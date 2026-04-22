@@ -2,7 +2,11 @@
 
 import { useEffect } from 'react';
 import { supabaseBrowser } from '@/BackendClient/supabaseForClient';
-import { useSetUser, useInitSession } from '@/app/stores/AuthoRegStore';
+import {
+    useSetUser,
+    useInitSession,
+    useFetchUserData,
+} from '@/app/stores/profileStore';
 
 export const AuthRegProvider = ({
     children,
@@ -11,16 +15,22 @@ export const AuthRegProvider = ({
 }) => {
     const setUser = useSetUser();
     const initSession = useInitSession();
+    const fetchUserData = useFetchUserData();
 
     useEffect(() => {
         initSession();
         const {
             data: { subscription },
-        } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
+        } = supabaseBrowser.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                setUser(session.user);
+                await fetchUserData();
+            } else {
+                setUser(null);
+            }
         });
         return () => subscription.unsubscribe();
-    }, [initSession, setUser]);
+    }, [initSession, setUser, fetchUserData]);
 
     return <>{children}</>;
 };

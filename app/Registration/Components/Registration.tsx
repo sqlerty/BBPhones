@@ -9,7 +9,7 @@ import {
     useAPassword,
     useSetAPassword,
     useSetPage,
-} from '@/app/stores/AuthoRegStore';
+} from '@/app/stores/profileStore';
 export default function Registration() {
     const email = useEmail();
     const password = usePassword();

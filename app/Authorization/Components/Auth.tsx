@@ -7,7 +7,7 @@ import {
     useEmail,
     usePassword,
     useSetPage,
-} from '@/app/stores/AuthoRegStore';
+} from '@/app/stores/profileStore';
 export default function Auth() {
     const router = useRouter();
     const goToPage = useSetPage();

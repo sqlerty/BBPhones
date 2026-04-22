@@ -1,6 +1,6 @@
 'use client';
 import { LuPhone, LuMail, LuMapPin } from 'react-icons/lu';
-import { useUser } from '@/app/stores/AuthoRegStore';
+import { useUser } from '@/app/stores/profileStore';
 export default function Contacts() {
     const user = useUser();
     return (

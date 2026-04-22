@@ -1,10 +1,15 @@
 'use client';
-import { useUser, setLogout } from '@/app/stores/AuthoRegStore';
+import {
+    useUser,
+    setLogout,
+    useFavoriteLength,
+} from '@/app/stores/profileStore';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { LuChevronRight, LuShield, LuLogOut } from 'react-icons/lu';
 export default function MainInfo() {
     const user = useUser();
     const handleLogout = setLogout;
+    const favoriteLength = useFavoriteLength();
     return (
         <div className="flex w-md flex-col gap-5 rounded-2xl bg-white p-10">
             <div className="flex h-24 w-24 items-center justify-center self-center rounded-full border-4 border-white bg-white shadow-xl shadow-blue-900/5">
@@ -23,8 +28,8 @@ export default function MainInfo() {
                         Заказов
                     </p>
                 </div>
-                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl">
-                    <h2 className="text-2xl font-black">0</h2>
+                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                    <h2 className="text-2xl font-black">{favoriteLength}</h2>
                     <p className="text-sm font-medium text-gray-500 uppercase">
                         Избранных
                     </p>

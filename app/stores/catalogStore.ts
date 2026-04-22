@@ -19,9 +19,18 @@ interface ICartStore{
     setCartPhones: (phone:ProductWithCategory) => void;
     deleteCartPhones: () => void;
     deletePhone:(phone:ProductWithCategory) => void;
+    cartLength: number;
 }
 
-type IBBPStore = ICatalogStore & ICartStore;
+interface ILikesStore{
+    activeTab: string;
+    setActiveTab: (word:string) => void;
+    favoritePhones: ProductWithCategory[] ;
+    setFavoritePhones: (phone:ProductWithCategory) => void;
+
+}
+
+type IBBPStore = ICatalogStore & ICartStore & ILikesStore;
 
 const CatalogStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ICatalogStore> = ((set,get) => ({
     phones: [],
@@ -29,6 +38,7 @@ const CatalogStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zu
     searchWord:"",
     searchedPhones:[],
     infoPhone: null,
+    
     
     fetchPhones: async () => {
         try{
@@ -67,10 +77,13 @@ const CatalogStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zu
 
 const CartStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ICartStore> = ((set,get) => ({
     cartPhones: [],
+    cartLength: 0 ,
     setCartPhones: (phone) => {
         const {phones} = get();
         const filtPhones = phones.filter((p) => phone.id == p.id);
         set((state) => ({cartPhones: [...state.cartPhones,...filtPhones]}))
+        const {cartPhones} = get();
+        set({cartLength: cartPhones.length})
     },
     deleteCartPhones: () => {
         set({cartPhones: []});
@@ -78,8 +91,32 @@ const CartStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zusta
     deletePhone: (phone) => {
         const {cartPhones} = get();
         const filtPhones = cartPhones.filter((p) => phone.id !== p.id);
-        set({cartPhones: filtPhones})
+        const {cartLength} = get();
+        set({cartPhones: filtPhones,cartLength:cartLength-1})
+        
     }
+}));
+
+const LikeStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ILikesStore> = ((set,get) => ({
+    activeTab: "",
+    favoritePhones: [],
+    setActiveTab: (word) =>{
+        if(word == "orders"){
+            set({activeTab: "orders"});
+        }
+        if(word == "favorites"){
+            set({activeTab: "favorites"});
+        }
+    },
+    setFavoritePhones:(phone) => {
+        const {favoritePhones} = get();
+        if(favoritePhones.includes(phone)){
+            set({favoritePhones: favoritePhones.filter((p) => p.id !== phone.id) })
+        }else{
+            set((state) => ({favoritePhones: [...state.favoritePhones,phone]}))
+        }
+    },
+    
 }));
 
 export const usePhoneStore = create<IBBPStore>()(
@@ -88,10 +125,12 @@ export const usePhoneStore = create<IBBPStore>()(
                 (...a) => ({
                     ...CatalogStoreSlice(...a),
                     ...CartStoreSlice(...a),
+                    ...LikeStoreSlice(...a),
+                    
                 }), {
                 name: "bbshop-storage",
                 storage:createJSONStorage(()=>localStorage),
-                partialize: (state) => ({phones: state.phones,cartPhones: state.cartPhones})
+                partialize: (state) => ({phones: state.phones,cartPhones: state.cartPhones,favoritePhones:state.favoritePhones})
             })
         )
 );
@@ -112,6 +151,14 @@ export const useCart = () => usePhoneStore((state) => state.cartPhones);
 export const useSetCart = () => usePhoneStore((state) => state.setCartPhones);
 export const useDelCart = () => usePhoneStore((state) => state.deleteCartPhones);
 export const useDeletePhone = () => usePhoneStore((state) => state.deletePhone);
+export const useCartLength = () => usePhoneStore((state) => state.cartLength);
 
+//Страница товра
 export const useInfoPhone = () => usePhoneStore((state) => state.infoPhone);
 export const useSetInfoPhone = () => usePhoneStore((state) => state.setInfoPhone);
+
+//Понравившиеся
+export const useActiveTab = () => usePhoneStore((state) => state.activeTab);
+export const useSetActiveTab = () => usePhoneStore((state) => state.setActiveTab);
+export const useFavoritePhones = () => usePhoneStore((state) => state.favoritePhones);
+export const useSetFavoritePhones = () => usePhoneStore((state) => state.setFavoritePhones);
