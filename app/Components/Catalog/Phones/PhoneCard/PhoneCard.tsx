@@ -2,7 +2,8 @@ import { GoStarFill } from 'react-icons/go';
 import { IoCartOutline } from 'react-icons/io5';
 import Image from 'next/image';
 import { ProductWithCategory } from '@/types/database';
-import { useSetCart, useSetInfoPhone } from '@/app/stores/catalogStore';
+import { useSetInfoPhone, useIsFilter } from '@/app/stores/catalogStore';
+import { useAddToCart } from '@/app/stores/profileStore';
 import { LuHeart } from 'react-icons/lu';
 import Link from 'next/link';
 
@@ -15,14 +16,15 @@ interface IPhoneCard {
     phone: ProductWithCategory;
 }
 export default function PhoneCard({ phone }: IPhoneCard) {
-    const setCart = useSetCart();
+    const setCart = useAddToCart();
     const setInfoPhone = useSetInfoPhone();
     const toggleFavorites = useToggleFavorites();
     const favoritePhonesId = useFavoritePhonesId();
+    const isFilter = useIsFilter();
     return (
         <div
             key={phone.id}
-            className="group flex h-130 w-100 flex-col overflow-hidden rounded-2xl border border-gray-100 transition-all duration-200 ease-in-out hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5"
+            className={`group flex ${isFilter ? 'h-fit w-72' : 'h-130 w-100'} flex-col overflow-hidden rounded-2xl border border-gray-100 transition-all duration-200 ease-in-out hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5`}
         >
             <div className="relative h-75 w-full bg-gray-50 p-10">
                 <button
@@ -70,7 +72,9 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                 <div className="flex items-center justify-between pt-2">
                     <div>
                         <span className="text-sm text-gray-400">Цена</span>
-                        <h4 className="text-lg font-bold">{phone.price} ₽</h4>
+                        <h4 className="text-lg font-bold">
+                            {phone.price.toLocaleString()} ₽
+                        </h4>
                     </div>
                     <button
                         onClick={() => setCart(phone)}

@@ -1,4 +1,5 @@
 import PhonesLength from './PhonesLength/PhonesLength';
+import { SortItems } from '../CatalogData';
 export default function SortBar() {
     return (
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pb-5">
@@ -16,10 +17,11 @@ export default function SortBar() {
                         backgroundSize: `1.5em 1.5em`,
                     }}
                 >
-                    <option value="popular">Сначала популярные</option>
-                    <option value="price-asc">Сначала дешевые</option>
-                    <option value="price-desc">Сначала дорогие</option>
-                    <option value="rating">По рейтингу</option>
+                    {SortItems.map((item) => (
+                        <option key={item.title} value={item.value}>
+                            {item.title}
+                        </option>
+                    ))}
                 </select>
             </div>
         </div>

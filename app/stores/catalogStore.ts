@@ -14,23 +14,22 @@ interface ICatalogStore{
     setInfoPhone: (phone:ProductWithCategory) => void;
 }
 
-interface ICartStore{
-    cartPhones: ProductWithCategory[];
-    setCartPhones: (phone:ProductWithCategory) => void;
-    deleteCartPhones: () => void;
-    deletePhone:(phone:ProductWithCategory) => void;
-    cartLength: number;
+interface IFilter{
+    filterPhones : ProductWithCategory[];
+    isFilter: boolean;
+    categoryFilter: string;
+    brandFilter: string[] ;
+    priceRange: [number,number];
+    setBrands: (brand:string ) => void;
+    setCategory: (category:string) => void;
+    setPriceRange: (maxRange:number) => void;
+    setFilter: () => void;
+    setFilterPhones: () => void;
+    clearFilters: () => void;
+    
 }
 
-interface ILikesStore{
-    activeTab: string;
-    setActiveTab: (word:string) => void;
-    favoritePhones: ProductWithCategory[] ;
-    setFavoritePhones: (phone:ProductWithCategory) => void;
-
-}
-
-type IBBPStore = ICatalogStore & ICartStore & ILikesStore;
+type IBBPStore = ICatalogStore & IFilter ;
 
 const CatalogStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ICatalogStore> = ((set,get) => ({
     phones: [],
@@ -75,62 +74,71 @@ const CatalogStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zu
 
 }));
 
-const CartStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ICartStore> = ((set,get) => ({
-    cartPhones: [],
-    cartLength: 0 ,
-    setCartPhones: (phone) => {
-        const {phones} = get();
-        const filtPhones = phones.filter((p) => phone.id == p.id);
-        set((state) => ({cartPhones: [...state.cartPhones,...filtPhones]}))
-        const {cartPhones} = get();
-        set({cartLength: cartPhones.length})
+const FilterSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],IFilter> = ((set,get) => ({
+    isFilter:false,
+    filterPhones: [],
+    categoryFilter:"all",
+    brandFilter:[],
+    priceRange:[0,150000],
+    setFilter: () => {
+        set({isFilter: !get().isFilter});
     },
-    deleteCartPhones: () => {
-        set({cartPhones: []});
+    setBrands: (brand) => {
+        set((prev) => ({brandFilter: prev.brandFilter.includes(brand) ? prev.brandFilter.filter((b) => b !== brand) : [...prev.brandFilter,brand]}));
+        get().setFilterPhones();
     },
-    deletePhone: (phone) => {
-        const {cartPhones} = get();
-        const filtPhones = cartPhones.filter((p) => phone.id !== p.id);
-        const {cartLength} = get();
-        set({cartPhones: filtPhones,cartLength:cartLength-1})
-        
+    setCategory: (category) => {
+        set({categoryFilter: category});
+        get().setFilterPhones();
+    },
+    setPriceRange: (maxRange) => {
+        set({priceRange: [0,maxRange]});
+        get().setFilterPhones();
+    },
+    setFilterPhones: () => {
+        const {categoryFilter,brandFilter,priceRange,phones} = get();
+
+        let result = [...phones];
+
+        if (categoryFilter !== "all") {
+            result = result.filter((phone) => {
+                const price = Number(phone.price);
+                if (categoryFilter === "flagman") return price >= 40000;
+                if (categoryFilter === "middle") return price < 40000 && price > 20000;
+                if (categoryFilter === "budget") return price <= 20000;
+                return true;
+            });
+        }
+        if (brandFilter.length > 0) {
+            result = result.filter((phone) => brandFilter.includes(phone.categories?.name ?? ""));
+        }
+
+        result = result.filter((phone) => {
+            const price = Number(phone.price);
+            return price >= priceRange[0] && price <= priceRange[1];
+        });
+
+        set({ filterPhones: result });
+    },
+    clearFilters: () => {
+        set({categoryFilter: "all",brandFilter: [],priceRange: [0,150000]});
+        get().setFilterPhones();
     }
+
 }));
 
-const LikeStoreSlice: StateCreator<IBBPStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],ILikesStore> = ((set,get) => ({
-    activeTab: "",
-    favoritePhones: [],
-    setActiveTab: (word) =>{
-        if(word == "orders"){
-            set({activeTab: "orders"});
-        }
-        if(word == "favorites"){
-            set({activeTab: "favorites"});
-        }
-    },
-    setFavoritePhones:(phone) => {
-        const {favoritePhones} = get();
-        if(favoritePhones.includes(phone)){
-            set({favoritePhones: favoritePhones.filter((p) => p.id !== phone.id) })
-        }else{
-            set((state) => ({favoritePhones: [...state.favoritePhones,phone]}))
-        }
-    },
-    
-}));
 
 export const usePhoneStore = create<IBBPStore>()(
         devtools(
             persist(
                 (...a) => ({
                     ...CatalogStoreSlice(...a),
-                    ...CartStoreSlice(...a),
-                    ...LikeStoreSlice(...a),
+                    ...FilterSlice(...a),
                     
                 }), {
                 name: "bbshop-storage",
                 storage:createJSONStorage(()=>localStorage),
-                partialize: (state) => ({phones: state.phones,cartPhones: state.cartPhones,favoritePhones:state.favoritePhones})
+                partialize: (state) => ({phones: state.phones,filterPhones:state.filterPhones})
             })
         )
 );
@@ -146,19 +154,17 @@ export const setSearchedPhones = (word:string) => usePhoneStore.getState().setSe
 export const useSearchWord = () => usePhoneStore((state) => state.searchWord);
 export const useSearchedPhones = () => usePhoneStore((state) => state.searchedPhones);
 
-//Корзина
-export const useCart = () => usePhoneStore((state) => state.cartPhones);
-export const useSetCart = () => usePhoneStore((state) => state.setCartPhones);
-export const useDelCart = () => usePhoneStore((state) => state.deleteCartPhones);
-export const useDeletePhone = () => usePhoneStore((state) => state.deletePhone);
-export const useCartLength = () => usePhoneStore((state) => state.cartLength);
-
 //Страница товра
 export const useInfoPhone = () => usePhoneStore((state) => state.infoPhone);
 export const useSetInfoPhone = () => usePhoneStore((state) => state.setInfoPhone);
 
-//Понравившиеся
-export const useActiveTab = () => usePhoneStore((state) => state.activeTab);
-export const useSetActiveTab = () => usePhoneStore((state) => state.setActiveTab);
-export const useFavoritePhones = () => usePhoneStore((state) => state.favoritePhones);
-export const useSetFavoritePhones = () => usePhoneStore((state) => state.setFavoritePhones);
+export const useIsFilter = () => usePhoneStore((state) => state.isFilter);
+export const useSetFilter = () => usePhoneStore((state) => state.setFilter);
+export const useFilterPhones = () => usePhoneStore((state) => state.filterPhones);
+export const useSetBrands = () => usePhoneStore((state) => state.setBrands);
+export const useSetCategory = () => usePhoneStore((state) => state.setCategory);
+export const useSetPriceRange = () => usePhoneStore((state) => state.setPriceRange);
+export const useSelectedCategory = () => usePhoneStore((state) => state.categoryFilter);
+export const useSelectedBrands = () => usePhoneStore((state) => state.brandFilter);
+export const usePriceRange = () => usePhoneStore((state) => state.priceRange);
+export const useClearFilters = () => usePhoneStore((state) => state.clearFilters);

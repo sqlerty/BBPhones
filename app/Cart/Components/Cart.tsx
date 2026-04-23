@@ -2,12 +2,19 @@
 import { LuTrash2 } from 'react-icons/lu';
 import CartPhone from './CartPhone/CartPhone';
 import OrderDetails from './OrderDetails/OrderDetails';
-import { useCart, useDelCart } from '@/app/stores/catalogStore';
+import {
+    useCart,
+    useClearCart,
+    useCartAmount,
+    useCartCount,
+} from '@/app/stores/profileStore';
 import VoidCart from './VoidCart';
 
 export default function Cart() {
     const cartPhones = useCart();
-    const deleteCart = useDelCart();
+    const deleteCart = useClearCart();
+    const cartAmount = useCartAmount();
+    const cartTotal = useCartCount();
     if (cartPhones.length < 1) return <VoidCart />;
     return (
         <div className="bg-gray-50">
@@ -18,7 +25,7 @@ export default function Cart() {
                             Ваша корзина
                         </h2>
                         <p className="font-medium text-gray-500">
-                            {`У вас ${cartPhones.length} товара на сумму 100 000 Р`}
+                            {`У вас ${cartTotal} ${cartTotal > 4 ? `гаджетов` : `гаджета`} на сумму ${cartAmount} Р`}
                         </p>
                     </div>
                     <button

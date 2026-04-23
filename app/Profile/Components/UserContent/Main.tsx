@@ -1,6 +1,6 @@
 'use client';
 import { LuPackage, LuHeart } from 'react-icons/lu';
-import { useActiveTab, useSetActiveTab } from '@/app/stores/catalogStore';
+import { useActiveTab, useSetActiveTab } from '@/app/stores/profileStore';
 import { motion } from 'motion/react';
 import UserFavorites from './UserFavorites/UserFavorites';
 

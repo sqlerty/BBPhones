@@ -1,14 +1,14 @@
 'use client';
 import { IoPhonePortraitOutline } from 'react-icons/io5';
 import { useUser } from '../../stores/profileStore';
-import { useCartLength } from '@/app/stores/catalogStore';
+import { useCartCount } from '@/app/stores/profileStore';
 import { navLinks } from './HeaderData';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
     const user = useUser();
-    const cartLength = useCartLength();
+    const cartLength = useCartCount();
     const pathname = usePathname();
     return (
         <div className="h-20 bg-gray-50">

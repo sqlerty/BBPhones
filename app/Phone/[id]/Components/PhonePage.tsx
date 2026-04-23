@@ -27,7 +27,7 @@ export default function PhonePage() {
                                 src={phone?.images[0]}
                                 alt="phone"
                                 width={500}
-                                height={500}
+                                height={1000}
                                 className="object-center"
                             />
                         )}

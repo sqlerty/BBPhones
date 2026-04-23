@@ -5,7 +5,8 @@ import { supabaseBrowser } from '@/BackendClient/supabaseForClient';
 import {
     useSetUser,
     useInitSession,
-    useFetchUserData,
+    useFetchFavorites,
+    useFetchCart,
 } from '@/app/stores/profileStore';
 
 export const AuthRegProvider = ({
@@ -15,8 +16,8 @@ export const AuthRegProvider = ({
 }) => {
     const setUser = useSetUser();
     const initSession = useInitSession();
-    const fetchUserData = useFetchUserData();
-
+    const fetchFavorites = useFetchFavorites;
+    const fetchProducts = useFetchCart();
     useEffect(() => {
         initSession();
         const {
@@ -24,13 +25,14 @@ export const AuthRegProvider = ({
         } = supabaseBrowser.auth.onAuthStateChange(async (event, session) => {
             if (session) {
                 setUser(session.user);
-                await fetchUserData();
+                await fetchFavorites();
+                await fetchProducts;
             } else {
                 setUser(null);
             }
         });
         return () => subscription.unsubscribe();
-    }, [initSession, setUser, fetchUserData]);
+    }, [initSession, setUser, fetchFavorites, fetchProducts]);
 
     return <>{children}</>;
 };

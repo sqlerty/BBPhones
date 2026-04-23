@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { LuShieldCheck, LuLock } from 'react-icons/lu';
+import { useCartAmount } from '@/app/stores/profileStore';
 
 export default function OrderDetails() {
+    const cartAmount = useCartAmount();
     return (
         <div className="sticky top-28 flex h-1/12 w-full flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20">
             <div className="pb-5">
@@ -11,7 +13,7 @@ export default function OrderDetails() {
                 <div className="flex flex-col gap-3 text-gray-300">
                     <div className="flex items-center justify-between">
                         <span>Товары</span>
-                        <span>80 000 Р</span>
+                        <span>{cartAmount.toLocaleString()} ₽</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span>Доставка</span>
@@ -25,7 +27,7 @@ export default function OrderDetails() {
                         Итого к оплате
                     </span>
                     <span className="text-3xl font-extrabold text-white">
-                        84 980 ₽
+                        {cartAmount.toLocaleString()} ₽
                     </span>
                 </div>
                 <div className="mt-8 flex flex-col gap-4">
