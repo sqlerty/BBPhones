@@ -1,24 +1,26 @@
 import { GoStarFill } from 'react-icons/go';
 import { IoCartOutline } from 'react-icons/io5';
 import Image from 'next/image';
-import { ProductWithCategory } from '@/types/database';
-import { useSetInfoPhone, useIsFilter } from '@/app/stores/catalogStore';
-import { useAddToCart } from '@/app/stores/profileStore';
-import { LuHeart } from 'react-icons/lu';
-import Link from 'next/link';
-
+import {
+    useCatalogActions,
+    useIsFilter,
+    ProductWithCategory,
+} from '@/app/stores/catalogStore';
 import {
     useFavoritePhonesId,
-    useToggleFavorites,
+    useCartActions,
+    useFavoriteActions,
 } from '@/app/stores/profileStore';
+import { LuHeart } from 'react-icons/lu';
+import Link from 'next/link';
 
 interface IPhoneCard {
     phone: ProductWithCategory;
 }
 export default function PhoneCard({ phone }: IPhoneCard) {
-    const setCart = useAddToCart();
-    const setInfoPhone = useSetInfoPhone();
-    const toggleFavorites = useToggleFavorites();
+    const { addToCart } = useCartActions();
+    const { toggleFavorite } = useFavoriteActions();
+    const { setInfoPhone } = useCatalogActions();
     const favoritePhonesId = useFavoritePhonesId();
     const isFilter = useIsFilter();
     return (
@@ -28,7 +30,7 @@ export default function PhoneCard({ phone }: IPhoneCard) {
         >
             <div className="relative h-75 w-full bg-gray-50 p-10">
                 <button
-                    onClick={() => toggleFavorites(phone)}
+                    onClick={() => toggleFavorite(phone)}
                     className={`absolute top-4 right-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full shadow-md transition-all ${
                         favoritePhonesId.includes(phone.id)
                             ? 'bg-rose-50 hover:bg-rose-100'
@@ -54,10 +56,10 @@ export default function PhoneCard({ phone }: IPhoneCard) {
             <div className="flex flex-col gap-3 bg-white p-5">
                 <div className="flex flex-col gap-2 border-b border-b-gray-100 pb-4">
                     <p className="text-sm text-blue-600 uppercase">
-                        {phone.categories?.name}
+                        {phone.category.name}
                     </p>
                     <Link
-                        href={`/Phone/${phone.id}`}
+                        href={`/Phone/${phone.slug}`}
                         onClick={() => setInfoPhone(phone)}
                     >
                         <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
@@ -66,18 +68,18 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                     </Link>
                     <div className="flex h-6 w-15 items-center justify-center gap-2 rounded-2xl bg-gray-50 font-bold">
                         <GoStarFill className="h-3 w-3 text-amber-300" />
-                        4.9
+                        {phone.averageRating}
                     </div>
                 </div>
                 <div className="flex items-center justify-between pt-2">
                     <div>
                         <span className="text-sm text-gray-400">Цена</span>
                         <h4 className="text-lg font-bold">
-                            {phone.price.toLocaleString()} ₽
+                            {Number(phone.price).toLocaleString()} ₽
                         </h4>
                     </div>
                     <button
-                        onClick={() => setCart(phone)}
+                        onClick={() => addToCart(phone)}
                         className="transition-al flex cursor-pointer items-center justify-center rounded-2xl bg-black px-3 py-3 duration-300 ease-in-out group-hover:-translate-y-1"
                     >
                         <IoCartOutline className="h-6 w-6 text-white" />

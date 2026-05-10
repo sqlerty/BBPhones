@@ -1,15 +1,16 @@
 'use client';
 import { LuPackage, LuHeart } from 'react-icons/lu';
-import { useActiveTab, useSetActiveTab } from '@/app/stores/profileStore';
+import { useActiveTab, useFavoriteActions } from '@/app/stores/profileStore';
 import { motion } from 'motion/react';
 import UserFavorites from './UserFavorites/UserFavorites';
+import UserOrders from './UserOrders/UserOrders';
 
 export default function UserContent() {
     const activeTab = useActiveTab();
-    const setActiveTab = useSetActiveTab();
+    const { setActiveTab } = useFavoriteActions();
 
     return (
-        <div className="flex h-auto w-full flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+        <div className="w-full overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
             <div className="flex border-b border-gray-100 px-2 pt-2 sm:px-6">
                 <button
                     onClick={() => setActiveTab('orders')}
@@ -48,6 +49,7 @@ export default function UserContent() {
                 </button>
             </div>
             {activeTab == 'favorites' && <UserFavorites />}
+            {activeTab == 'orders' && <UserOrders />}
         </div>
     );
 }

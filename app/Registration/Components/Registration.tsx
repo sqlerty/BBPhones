@@ -1,35 +1,23 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import {
-    setReg,
-    useSetEmail,
-    useSetPassword,
-    useEmail,
-    usePassword,
-    useAPassword,
-    useSetAPassword,
-    useSetPage,
-} from '@/app/stores/profileStore';
+import { useAuthActions } from '@/app/stores/profileStore';
+import { useState } from 'react';
+import Link from 'next/link';
 export default function Registration() {
-    const email = useEmail();
-    const password = usePassword();
-    const aPassword = useAPassword();
-
-    const setEmail = useSetEmail();
-    const setPassword = useSetPassword();
-    const setAPassword = useSetAPassword();
-
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [aPassword, setAPassword] = useState('');
+    const { handleReg } = useAuthActions();
     const router = useRouter();
-    const goToPage = useSetPage();
-    const handleReg = (e: React.SubmitEvent) => {
+    const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
-        setReg(email, password, aPassword, router);
+        handleReg(email, password, aPassword, router);
     };
 
     return (
         <div className="flex h-screen items-center justify-center bg-white">
             <form
-                onSubmit={handleReg}
+                onSubmit={handleSubmit}
                 className="mx-auto flex h-120 w-md flex-col gap-10 rounded-2xl bg-purple-800 p-5 text-white"
             >
                 <h1 className="text-center text-2xl">Регистрация</h1>
@@ -71,13 +59,12 @@ export default function Registration() {
                     >
                         Зарегистрироваться
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => goToPage(router, '/Authorization')}
-                        className="h-10 w-40 cursor-pointer rounded-2xl bg-white text-center text-purple-800 transition-all duration-200 ease-in-out hover:border hover:border-white hover:bg-purple-700 hover:text-white"
+                    <Link
+                        href={'/Authorization'}
+                        className="flex h-10 w-40 cursor-pointer items-center justify-center rounded-2xl bg-white text-center text-purple-800 transition-all duration-200 ease-in-out hover:border hover:border-white hover:bg-purple-700 hover:text-white"
                     >
                         Авторизация
-                    </button>
+                    </Link>
                 </div>
             </form>
         </div>

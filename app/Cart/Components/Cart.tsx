@@ -4,7 +4,7 @@ import CartPhone from './CartPhone/CartPhone';
 import OrderDetails from './OrderDetails/OrderDetails';
 import {
     useCart,
-    useClearCart,
+    useCartActions,
     useCartAmount,
     useCartCount,
 } from '@/app/stores/profileStore';
@@ -12,13 +12,13 @@ import VoidCart from './VoidCart';
 
 export default function Cart() {
     const cartPhones = useCart();
-    const deleteCart = useClearCart();
+    const { clearCart } = useCartActions();
     const cartAmount = useCartAmount();
     const cartTotal = useCartCount();
     if (cartPhones.length < 1) return <VoidCart />;
     return (
         <div className="bg-gray-50">
-            <div className="mx-auto flex max-w-7xl flex-col px-5 pt-10">
+            <div className="mx-auto flex max-w-7xl flex-col px-5 py-10">
                 <div className="flex items-end justify-between">
                     <div className="flex flex-col gap-3">
                         <h2 className="text-3xl font-extrabold">
@@ -29,7 +29,7 @@ export default function Cart() {
                         </p>
                     </div>
                     <button
-                        onClick={() => deleteCart()}
+                        onClick={() => clearCart()}
                         className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2"
                     >
                         <LuTrash2 className="h-4 w-4" />

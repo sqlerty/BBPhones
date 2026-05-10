@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Users {
+  id         String     @id @default(uuid()) @db.Uuid
+  email      String     @unique
+  password   String     
+  name       String?
+  avatarUrl  String?    @map("avatar_url")
+  role       UserRole   @default(USER)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  orders     Orders[]
+  favorites  Favorites[]
+  reviews    Reviews[]
+  cart       Cart[]     
+
+  @@map("users")
+}
+
+model Categories {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  
+  products  Products[]
+
+  @@map("categories")
+}
+
+model Products {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String   @unique
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  images      String[] @default([])
+  ram         Int
+  storage     Int
+  color       String
+  specs       Json?    
+  createdAt   DateTime @default(now()) @map("created_at")
+  categoryId  String   @db.Uuid @map("category_id")
+  category    Categories @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  averageRating Float    @default(0)
+  reviewCount   Int      @default(0)
+  orderItems  OrderItems[]
+  favorites   Favorites[]
+  reviews     Reviews[]
+  cart        Cart[]
+
+  @@map("products")
+}
+
+model Orders {
+  id          String      @id @default(uuid()) @db.Uuid
+  userId      String      @db.Uuid @map("user_id")
+  user        Users        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2) @map("total_amount")
+  address     String
+  phone       String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  orderItems  OrderItems[]
+
+  @@map("orders")
+}
+
+model OrderItems {
+  id        String  @id @default(uuid()) @db.Uuid
+  orderId   String  @db.Uuid @map("order_id")
+  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String  @db.Uuid @map("product_id")
+  product   Products @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+
+  @@map("order_items")
+}
+
+model Favorites {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid @map("user_id")
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String   @db.Uuid @map("product_id")
+  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+
+model Reviews {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid @map("user_id")
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String   @db.Uuid @map("product_id")
+  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Int      
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
+}
+
+model Cart {
+  id        String  @id @default(uuid()) @db.Uuid
+  userId    String  @db.Uuid @map("user_id")
+  user      Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String  @db.Uuid @map("product_id")
+  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @default(1)
+
+  @@unique([userId, productId])
+  @@map("cart")
+}

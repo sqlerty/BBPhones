@@ -1,39 +1,47 @@
-import { create,StateCreator } from 'zustand'
-import axios from 'axios'
-import { createJSONStorage, devtools, persist } from 'zustand/middleware'
+import { create, StateCreator } from 'zustand';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { isEmail } from 'validator';
-import { User } from '@supabase/supabase-js';
-import { supabaseBrowser } from '@/BackendClient/supabaseForClient';
-import { ProductWithCategory } from '@/types/database';
+import axios, { AxiosError } from 'axios';
+import { ProductWithCategory } from './catalogStore';
 
 interface IUser {
-  id: string
-  email: string | undefined
+    id: string;
+    email: string | undefined;
+    avatarUrl: string;
+    name: string;
+    role: string;
 }
-interface IProfile{
-    email:string;
-    setEmail: (mail:string) => void;
-    password: string;
-    setPassword: (pass:string) => void;
-    aPassword: string;
-    setAPassword: (apass : string) => void;
-    handleAuth: (email:string,password:string, router: AppRouterInstance) => Promise<void>;
-    handleReg: (email:string,password:string,aPassword:string,router: AppRouterInstance) => Promise<void>;
-    handleLogout: () => Promise<void>;
-    isAuth:boolean;
+interface IProfile {
+    handleAuth: (
+        email: string,
+        password: string,
+        router: AppRouterInstance
+    ) => Promise<void>;
+    handleReg: (
+        email: string,
+        password: string,
+        aPassword: string,
+        router: AppRouterInstance
+    ) => Promise<void>;
+    handleLogout: (router: AppRouterInstance) => Promise<void>;
+    isAdmin: boolean;
+    setAdmin: (admin: boolean) => void;
+    isAuth: boolean;
     goToPage: (router: AppRouterInstance, path: string) => void;
     user: IUser | null;
-    setUser: (user: User | null) => void;
+    updateProfile: (formData: FormData) => Promise<void>;
     initializeFromSession: () => Promise<void>;
-    headBtn:boolean;
+    headBtn: boolean;
     setHeadBtn: () => void;
 }
 
 export interface IFavorite {
     product_id: string;
 }
-
+interface ApiError {
+    error: string;
+}
 export interface IOrder {
     id: string;
     total_price: number;
@@ -42,119 +50,131 @@ export interface IOrder {
     items?: ProductWithCategory[];
 }
 
-export interface IFavoriteSlice{
-    favoritePhonesId: string[]; 
-    favoritePhones: ProductWithCategory[]; 
+export interface IFavoriteSlice {
+    favoritePhonesId: string[];
+    favoritePhones: ProductWithCategory[];
     toggleFavorite: (phone: ProductWithCategory) => Promise<void>;
     fetchFavorites: () => Promise<void>;
     activeTab: string;
-    setActiveTab: (word:string) => void;
+    setActiveTab: (word: string) => void;
 }
 
 export interface ICartItem {
-    id: string;       
-    name: string;      
-    price: number;     
-    image: string;    
-    quantity: number;  
-    category?: string; 
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    quantity: number;
+    category?: string;
     ram: number;
-    storage:number;
+    storage: number;
 }
 
 export interface ICart {
     cart: ICartItem[];
-    cartTotalQuantity: number; 
+    cartTotalQuantity: number;
     isCartLoading: boolean;
-    fetchCart: () => Promise<void>; 
-    addToCart: (phone: ProductWithCategory ) => Promise<void>;
+    fetchCart: () => Promise<void>;
+    addToCart: (phone: ProductWithCategory) => Promise<void>;
     removeFromCart: (productId: string) => Promise<void>;
     updateQuantity: (productId: string, delta: number) => Promise<void>;
     clearCart: () => Promise<void>;
+    createOrder: (addres: string, phone: string) => Promise<void>;
 }
 
-type IProfileStore = IProfile & IFavoriteSlice & ICart ;
+export interface IOrder {
+    id: string;
+    totalAmount: number;
+    orderStatus: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    createdAt: string;
+    orderItems: {
+        id: string;
+        quantity: number;
+        price: number;
+        product: ProductWithCategory;
+    }[];
+}
 
-const serializeUser = (user: User): IUser => ({
-  id: user.id,
-  email: user.email,
-})
+interface IOrderStore {
+    orders: IOrder[];
+    isOrdersLoading: boolean;
+    fetchOrders: () => Promise<void>;
+}
 
+type IProfileStore = IProfile & IFavoriteSlice & ICart & IOrderStore;
 
-const ProfileAuthSlice : StateCreator<IProfileStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],IProfile> = ((set,get) => ({
-    email:'',
-    password:'',
-    aPassword:'',
-    isAuth:false,
+const ProfileAuthSlice: StateCreator<
+    IProfileStore,
+    [['zustand/devtools', never], ['zustand/persist', unknown]],
+    [],
+    IProfile
+> = (set, get) => ({
+    isAuth: false,
+    isAdmin: false,
     user: null,
-    headBtn:false,
-    setUser: (user: User | null) => {
-        set({
-            user: user ? serializeUser(user) : null,
-            isAuth: !!user,
-        })
-    },
-    
-    setEmail : (mail) => {
-        set({email: mail});
-    },
-    setPassword : (pass) => {
-        set({password : pass});
-    },
-    setAPassword : (apass) => {
-        set({aPassword:apass});
+    headBtn: false,
+    setAdmin: (admin) => {
+        set({ isAdmin: admin });
     },
     setHeadBtn: () => {
-        set({headBtn: true});
+        set({ headBtn: true });
     },
     initializeFromSession: async () => {
         try {
-        const {data: { session }} = await supabaseBrowser.auth.getSession()
+            const { data } = await axios.get('/api/auth/init');
+            set({ isAuth: true, user: data });
+            await Promise.all([
+                get().fetchFavorites(),
+                get().fetchCart(),
+                get().fetchOrders(),
+            ]);
+        } catch {
+            set({ isAuth: false, user: null });
+        }
+    },
 
-        if (session?.user) {
-            set({user: serializeUser(session.user),isAuth: true})
-            await get().fetchFavorites;
-        } else {
-            set({ user: null, isAuth: false })
-        }
-        } catch (error) {
-            console.error('Ошибка инициализации сессии:', error)
-            set({ user: null, isAuth: false })
-        }
-    },
-    handleAuth : async (email,password,router) => {
-        if (!isEmail(email)){
-            alert("Некорректный формат почты")
-            return;
-        }
+    handleAuth: async (email, password, router) => {
+        if (!isEmail(email)) return alert('Некорректный формат почты');
+
         try {
-            const {data,error} = await supabaseBrowser.auth.signInWithPassword({email,password});
-            if(error){
-                alert(`Ошибка: ${error.message}`);
-                return;
-            }
-            if(data.user){
-                set({isAuth: true, user:serializeUser(data.user),password:'',email:''})
-                await get().fetchFavorites();
-            }
-            alert(`Успех: Вы вошли в систему!`);
-            router.push('/');   
-            router.refresh();
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                alert(`Ошибка: ${error.response.data.error}`);
+            const { data } = await axios.post('/api/auth/login', {
+                email,
+                password,
+            });
+            alert(`Успех: ${data.message}`);
+            set({ isAuth: true, user: data.user });
+            await Promise.all([get().fetchFavorites(), get().fetchCart()]);
+            router.push('/');
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                const serverError = err as AxiosError<ApiError>;
+                alert(
+                    `Ошибка: ${serverError.response?.data?.error || 'Неверные данные'}`
+                );
             } else {
-                alert('Произошла неизвестная ошибка');
+                alert('Ошибка при входе');
             }
         }
     },
-    handleReg : async (email,password,aPassword,router) => {
-        if (!isEmail(email)){
-            alert("Некорректный формат почты");
+    updateProfile: async (formData: FormData) => {
+        try {
+            const { data } = await axios.post('/api/profile/update', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            set({ user: data });
+            alert('Профиль обновлен!');
+        } catch {
+            alert('Ошибка при сохранении');
+        }
+    },
+    handleReg: async (email, password, aPassword, router) => {
+        if (!isEmail(email)) {
+            alert('Некорректный формат почты');
             return;
         }
-        if(password.length <= 8 ){
-            alert("Пароль слишком маленький!");
+        if (password.length <= 8) {
+            alert('Пароль слишком маленький!');
             return;
         }
         if (password !== aPassword) {
@@ -162,199 +182,224 @@ const ProfileAuthSlice : StateCreator<IProfileStore,[["zustand/devtools",never],
             return;
         }
         try {
-            const {data,error} = await supabaseBrowser.auth.signUp({email,password});
-            if (error) {
-                alert(`Ошибка: ${error.message}`);
+            const response = await axios.post('api/auth/register', {
+                email,
+                password,
+            });
+
+            if (response.status === 200) {
+                alert(`Успех: ${response.data.message}`);
+                await get().handleAuth(email, password, router);
+            } else {
+                alert(`Ошибка: ${response.data.message}`);
                 return;
-            } 
-            if(data.user){
-                set({isAuth:true,user:serializeUser(data.user),password:'',aPassword:'',email:''})
-                await get().fetchFavorites();
-                await get().fetchCart();
-                alert(`Вы успешно зарегистрировались!`);
-                router.push('/');
-            }else{
-                alert('Проверьте почту для подтверждения регистрации');
-                router.push('/Authorization');
             }
-            
         } catch {
             alert('Произошла неизвестная ошибка');
         }
     },
-    handleLogout: async () => {
-        try{
-            const {error} = await supabaseBrowser.auth.signOut();
-            if (error) {
-                alert(`Ошибка: ${error.message}`);
-                return;
-            } 
-            set({user: null,isAuth: false});
-
-        }catch{
-            alert(`Произошла неизвестная ошибка!`)
+    handleLogout: async (router) => {
+        try {
+            await axios.post('/api/auth/logout');
+            set({ user: null, isAuth: false, cart: [], favoritePhones: [] });
+            router.push('/');
+        } catch {
+            alert(`Произошла неизвестная ошибка!`);
         }
     },
 
     goToPage: (router, path) => {
-        router.push(path) 
-    }
-    
-}))
-type FavoriteRow = {
-    products: ProductWithCategory | null;
-};
+        router.push(path);
+    },
+});
 
-const FavoriteSlice: StateCreator<IProfileStore,[["zustand/devtools",never],["zustand/persist",unknown]],[],IFavoriteSlice> = ((set,get) => ({
-   favoritePhones: [],
-   favoritePhonesId:[],
-activeTab: "",
-   fetchFavorites: async () => {
-        const userId = get().user?.id;
-        if (!userId) return;
-
-        const { data, error } = await supabaseBrowser.from('favorites').select('products(*)').eq('user_id', userId);
-
-        if (error) return console.error(error);
-
-        if (data) {
-            const rows = (data as unknown) as FavoriteRow[];
-            const products = rows.map(r => r.products).filter((p): p is ProductWithCategory => p !== null);
-
-            set({ favoritePhones: products,favoritePhonesId: products.map(p => p.id) });
+const FavoriteSlice: StateCreator<
+    IProfileStore,
+    [['zustand/devtools', never], ['zustand/persist', unknown]],
+    [],
+    IFavoriteSlice
+> = (set, get) => ({
+    favoritePhones: [],
+    favoritePhonesId: [],
+    activeTab: '',
+    fetchFavorites: async () => {
+        try {
+            const { data } = await axios.get('/api/favorites');
+            const products = data as ProductWithCategory[];
+            set({
+                favoritePhones: products,
+                favoritePhonesId: products.map((p) => p.id),
+            });
+        } catch {
+            console.error('Ошибка загрузки избранного');
         }
     },
 
     toggleFavorite: async (phone) => {
-        const userId = get().user?.id;
-        if (!userId) return alert("Войдите в аккаунт");
-        const { favoritePhonesId, favoritePhones } = get();
-        const isFavorite = favoritePhonesId.includes(phone.id);
-
-        const nextIds = isFavorite ? favoritePhonesId.filter(id => id !== phone.id) : [...favoritePhonesId, phone.id];
-        const nextItems = isFavorite ? favoritePhones.filter(p => p.id !== phone.id) : [...favoritePhones, phone];
-
-        set({ favoritePhonesId: nextIds, favoritePhones: nextItems });
-
-        if (isFavorite) {
-            const { error } = await supabaseBrowser.from('favorites').delete().eq('user_id', userId).eq('product_id', phone.id);
-            if (error) {
-                set({ favoritePhonesId, favoritePhones });
-                alert("Не удалось удалить из избранного");
-            }
-        } else {
-            const { error } = await supabaseBrowser.from('favorites').insert({ user_id: userId, product_id: phone.id });
-
-            if (error) {
-                set({ favoritePhonesId, favoritePhones });
-                alert("Не удалось добавить в избранное");
-            }
+        const { isAuth, favoritePhonesId, favoritePhones } = get();
+        if (!isAuth) return alert('Войдите в аккаунт');
+        const isFav = favoritePhonesId.includes(phone.id);
+        const nextIds = isFav
+            ? favoritePhonesId.filter((id) => id !== phone.id)
+            : [...favoritePhonesId, phone.id];
+        const nextPhones = isFav
+            ? favoritePhones.filter((p) => p.id !== phone.id)
+            : [...favoritePhones, phone];
+        set({ favoritePhonesId: nextIds, favoritePhones: nextPhones });
+        try {
+            await axios.post('/api/favorites', { productId: phone.id });
+        } catch {
+            set({ favoritePhonesId, favoritePhones });
+            alert('Ошибка при сохранении');
         }
     },
-    setActiveTab: (word) =>{
-        if(word == "orders"){
-            set({activeTab: "orders"});
-        }
-        if(word == "favorites"){
-            set({activeTab: "favorites"});
-        }
+    setActiveTab: (word) => {
+        set({ activeTab: word });
     },
-    
-}));
+});
 
-interface ICartResponse {
-    quantity: number;
-    products: ProductWithCategory | null; 
-}
-const createCartSlice: StateCreator<IProfileStore, [["zustand/devtools", never], ["zustand/persist", unknown]], [], ICart> = (set, get) => ({
+const CartSlice: StateCreator<
+    IProfileStore,
+    [['zustand/devtools', never], ['zustand/persist', unknown]],
+    [],
+    ICart
+> = (set, get) => ({
     cart: [],
-    cartTotalQuantity: 0, 
+    cartTotalQuantity: 0,
     isCartLoading: true,
     fetchCart: async () => {
-        const { user, isAuth } = get();
-        if (!isAuth || !user) return;
-        const { data, error } = await supabaseBrowser.from('cart').select(`quantity, products (*)`).eq('user_id', user.id);
-        if (error) {
-            console.error(error);
-            return;
-        }
+        const { isAuth } = get();
+        if (!isAuth) return;
 
-        if (data) {
-            const rows = (data as unknown) as ICartResponse[];
-            const formattedCart: ICartItem[] = rows.map((item) => {
-                    if (!item.products) return null;
-                    return {
-                        id: item.products.id,
-                        name: item.products.name,
-                        price: Number(item.products.price),
-                        image: item.products.images[0],
-                        ram: item.products.ram,
-                        storage:item.products.storage,
-                        quantity: item.quantity,
-                    }}).filter((item): item is ICartItem => item !== null);
-          
-            set({ cart: formattedCart});
-           
+        try {
+            const { data } = await axios.get('/api/cart');
+            set({ cart: data });
+        } catch {
+            alert('Ошибка загрузки корзины');
         }
     },
 
     addToCart: async (phone) => {
-        const { isAuth, user, cart } = get();
-        const existingItem = cart.find(item => item.id === phone.id);
-        
-        let newCart;
-        if (existingItem) {newCart = cart.map(item => item.id === phone.id ? { ...item, quantity: item.quantity + 1 } : item);
-        } else {
-            newCart = [...cart, { 
-                id: phone.id, 
-                name: phone.name, 
-                price: phone.price, 
-                image: phone.images[0], 
-                quantity: 1 ,
-                ram:phone.ram,
-                storage:phone.storage
-            }];
-        }
-        
-        
+        const { cart, isAuth } = get();
+        const existing = cart.find((i) => i.id === phone.id);
+
+        const newCart = existing
+            ? cart.map((i) =>
+                  i.id === phone.id ? { ...i, quantity: i.quantity + 1 } : i
+              )
+            : [
+                  ...cart,
+                  {
+                      id: phone.id,
+                      name: phone.name,
+                      price: Number(phone.price),
+                      image: phone.images[0],
+                      ram: phone.ram,
+                      storage: phone.storage,
+                      quantity: 1,
+                  },
+              ];
+
         set({ cart: newCart });
 
-        if (isAuth && user) {
-            await supabaseBrowser.from('cart').upsert({user_id: user.id,product_id: phone.id,quantity: existingItem ? existingItem.quantity + 1 : 1});
+        if (isAuth) {
+            try {
+                const nextQty = existing ? existing.quantity + 1 : 1;
+                await axios.post('/api/cart', {
+                    productId: phone.id,
+                    quantity: nextQty,
+                });
+            } catch {
+                console.error('Ошибка синхронизации корзины');
+            }
         }
     },
 
     updateQuantity: async (id, delta) => {
-        const { isAuth, user, cart } = get();
-        const newCart = cart.map(item => item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item);
+        const { cart, isAuth } = get();
+        const item = cart.find((i) => i.id === id);
+        if (!item) return;
+
+        const newQty = Math.max(1, item.quantity + delta);
+        const newCart = cart.map((i) =>
+            i.id === id ? { ...i, quantity: newQty } : i
+        );
+
         set({ cart: newCart });
 
-        if (isAuth && user) {   
-            const item = newCart.find(i => i.id === id);
-            if (item) {
-                await supabaseBrowser.from('cart').update({ quantity: item.quantity }).eq('user_id', user.id).eq('product_id', id);
-                set({cartTotalQuantity: item.quantity});
+        if (isAuth) {
+            try {
+                await axios.post('/api/cart', {
+                    productId: id,
+                    quantity: newQty,
+                });
+            } catch {
+                console.error('Ошибка обновления количества');
             }
         }
     },
 
     removeFromCart: async (id) => {
-        const { isAuth, user, cart } = get();
-        set({ cart: cart.filter(item => item.id !== id) });
-        if (isAuth && user) {
-            await supabaseBrowser.from('cart').delete().eq('user_id', user.id).eq('product_id', id);
+        const { cart, isAuth } = get();
+        set({ cart: cart.filter((i) => i.id !== id) });
+
+        if (isAuth) {
+            try {
+                await axios.delete(`/api/cart?productId=${id}`);
+            } catch {
+                console.error('Ошибка удаления');
+            }
         }
     },
 
     clearCart: async () => {
-        const { isAuth, user } = get();
+        const { isAuth } = get();
         set({ cart: [] });
-        if (isAuth && user) {
-            await supabaseBrowser.from('cart').delete().eq('user_id', user.id);
+
+        if (isAuth) {
+            try {
+                await axios.delete('/api/cart');
+            } catch {
+                console.error('Ошибка очистки');
+            }
         }
-    }
+    },
+    createOrder: async (address, phone) => {
+        try {
+            const { data } = await axios.post('/api/orders', {
+                address,
+                phone,
+            });
+
+            if (data.confirmationUrl) {
+                window.location.href = data.confirmationUrl;
+            }
+            await get().clearCart();
+        } catch {
+            alert('Не удалось провести платеж!');
+        }
+    },
 });
 
+const OrderSlice: StateCreator<
+    IProfileStore,
+    [['zustand/devtools', never], ['zustand/persist', unknown]],
+    [],
+    IOrderStore
+> = (set) => ({
+    orders: [],
+    isOrdersLoading: false,
+    fetchOrders: async () => {
+        set({ isOrdersLoading: true });
+        try {
+            const { data } = await axios.get(`/api/orders/history`);
+            set({ orders: data, isOrdersLoading: false });
+        } catch {
+            alert('Ошибка загрузки отзывов!');
+            set({ isOrdersLoading: false });
+        }
+    },
+});
 
 const useProfileStore = create<IProfileStore>()(
     devtools(
@@ -362,53 +407,99 @@ const useProfileStore = create<IProfileStore>()(
             (...a) => ({
                 ...ProfileAuthSlice(...a),
                 ...FavoriteSlice(...a),
-                ...createCartSlice(...a),
-            }),{
-                name: "profile-storage",
-                storage:createJSONStorage(()=>localStorage),
-                partialize: (state) => ({isAuth : state.isAuth, user:state.user,favoritePhones: state.favoritePhones,favoritePhonesId:state.favoritePhonesId,cart: state.cart})
-            })
+                ...CartSlice(...a),
+                ...OrderSlice(...a),
+            }),
+            {
+                name: 'profile-storage',
+                storage: createJSONStorage(() => localStorage),
+                partialize: (state) => ({
+                    isAuth: state.isAuth,
+                    user: state.user,
+                    favoritePhones: state.favoritePhones,
+                    favoritePhonesId: state.favoritePhonesId,
+                    cart: state.cart,
+                    orders: state.orders,
+                    activeTab: state.activeTab,
+                    isAdmin: state.isAdmin,
+                }),
+            }
         )
-)
+    )
+);
 
 export const useAuth = () => useProfileStore((state) => state.isAuth);
 
-export const useEmail = () => useProfileStore((state) => state.email);
-export const useSetEmail = () => useProfileStore((state) => state.setEmail);
-export const usePassword = () => useProfileStore((state) => state.password);
-export const useSetPassword = () => useProfileStore((state) => state.setPassword);
-export const useAPassword = () => useProfileStore((state) => state.aPassword);
-export const useSetAPassword = () => useProfileStore((state) => state.setAPassword);
-
-export const setAuth = (email:string,password:string,router: AppRouterInstance) => useProfileStore.getState().handleAuth(email,password,router);
-export const setReg = (email:string,password:string,aPassword:string,router: AppRouterInstance) =>  useProfileStore.getState().handleReg(email,password,aPassword,router);
-export const setLogout = () => useProfileStore.getState().handleLogout();
-
 export const useSetPage = () => useProfileStore((state) => state.goToPage);
 
-export const useSetUser = () => useProfileStore((state) => state.setUser);
 export const useUser = () => useProfileStore((state) => state.user);
 
-export const useInitSession = () => useProfileStore((state) => state.initializeFromSession);
+export const useInitSession = () =>
+    useProfileStore((state) => state.initializeFromSession);
 
 export const useHeadBtn = () => useProfileStore((state) => state.headBtn);
 export const useSetHeadBtn = () => useProfileStore((state) => state.setHeadBtn);
 
 export const useActiveTab = () => useProfileStore((state) => state.activeTab);
-export const useSetActiveTab= () => useProfileStore((state) => state.setActiveTab);
 
-export const useFetchUserData = () => useProfileStore.getState().fetchFavorites();
-export const useFetchFavorites = () => useProfileStore.getState().fetchFavorites();
-export const useFavoritePhones = () => useProfileStore((state) => state.favoritePhones);
-export const useFavoritePhonesId = () => useProfileStore((state) => state.favoritePhonesId);
-export const useToggleFavorites = () => useProfileStore((state) => state.toggleFavorite);
-export const useFavoriteLength = () => useProfileStore((state) => state.favoritePhonesId.length);
+export const useFavoritePhones = () =>
+    useProfileStore((state) => state.favoritePhones);
+export const useFavoritePhonesId = () =>
+    useProfileStore((state) => state.favoritePhonesId);
+export const useFavoriteLength = () =>
+    useProfileStore((state) => state.favoritePhonesId.length);
 
 export const useCart = () => useProfileStore((state) => state.cart);
-export const useRemoveCart = () => useProfileStore((state) => state.removeFromCart);
-export const useFetchCart = () => useProfileStore.getState().fetchCart();
-export const useAddToCart = () => useProfileStore((state) => state.addToCart);
-export const useClearCart = () => useProfileStore((state) => state.clearCart);
-export const useCartAmount = () => useProfileStore((state) => state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0));
-export const useUpdateQuantity = () => useProfileStore((state) => state.updateQuantity);
-export const useCartCount = () => useProfileStore((state) => state.cart.reduce((total, p) => total + p.quantity, 0));
+export const useCartAmount = () =>
+    useProfileStore((state) =>
+        state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    );
+
+export const useCartCount = () =>
+    useProfileStore((state) =>
+        state.cart.reduce((total, p) => total + p.quantity, 0)
+    );
+
+export const useOrders = () => useProfileStore((state) => state.orders);
+export const useOrdersLength = () =>
+    useProfileStore((state) => state.orders.length);
+export const useOrdersLoading = () =>
+    useProfileStore((state) => state.isOrdersLoading);
+
+export const useOrderActions = () => {
+    const { fetchOrders } = useProfileStore.getState();
+    return { fetchOrders };
+};
+
+export const useIsAdmin = () => useProfileStore((state) => state.isAdmin);
+
+export const useAuthActions = () => {
+    const { handleAuth, handleReg, handleLogout, updateProfile, setAdmin } =
+        useProfileStore.getState();
+    return { handleAuth, handleReg, handleLogout, updateProfile, setAdmin };
+};
+
+export const useCartActions = () => {
+    const {
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        fetchCart,
+        createOrder,
+    } = useProfileStore.getState();
+    return {
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        fetchCart,
+        createOrder,
+    };
+};
+
+export const useFavoriteActions = () => {
+    const { toggleFavorite, fetchFavorites, setActiveTab } =
+        useProfileStore.getState();
+    return { toggleFavorite, fetchFavorites, setActiveTab };
+};

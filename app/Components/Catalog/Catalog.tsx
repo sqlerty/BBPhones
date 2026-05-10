@@ -7,7 +7,7 @@ import { useIsFilter } from '@/app/stores/catalogStore';
 export default function Catalog() {
     const isFilter = useIsFilter();
     return (
-        <div className="bg-gray-50">
+        <div className="bg-gray-50 pb-10">
             <div className="mx-auto max-w-7xl">
                 <TitleBar />
                 <SortBar />

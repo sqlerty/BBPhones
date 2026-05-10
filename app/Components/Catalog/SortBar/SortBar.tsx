@@ -1,6 +1,9 @@
 import PhonesLength from './PhonesLength/PhonesLength';
 import { SortItems } from '../CatalogData';
+import { useSort, useCatalogActions } from '@/app/stores/catalogStore';
 export default function SortBar() {
+    const sort = useSort();
+    const { setSort } = useCatalogActions();
     return (
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pb-5">
             <PhonesLength />
@@ -16,6 +19,8 @@ export default function SortBar() {
                         backgroundRepeat: `no-repeat`,
                         backgroundSize: `1.5em 1.5em`,
                     }}
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
                 >
                     {SortItems.map((item) => (
                         <option key={item.title} value={item.value}>

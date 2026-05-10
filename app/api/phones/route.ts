@@ -1,22 +1,20 @@
-import { NextResponse } from "next/server";
-import { createClient} from "@/BackendClient/supabase";
-
-export const dynamic = 'force-dynamic';
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-    try{
-        const supabase = await createClient();
-        const {data,error} = await supabase.from('products').select(`*,categories(id,name)`).order('created_at',{ascending:false});
+    try {
+        const products = await prisma.products.findMany({
+            include: {
+                category: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
 
-        if (error){
-            console.error('Supabase error:',error);
-            return NextResponse.json({error:error.message},{status:500});
-        }
-
-        return NextResponse.json(data);
-    }catch(err){
-        console.error('Неизвестная ошибка:',err);
-        return NextResponse.json({error:"Внутренняя ошибка сервера"},{status:500});
+        return NextResponse.json(products);
+    } catch (error) {
+        console.error('API Error:', error);
+        return NextResponse.json({ error: 'Ошибка при получении данных' }, { status: 500 });
     }
-
 }

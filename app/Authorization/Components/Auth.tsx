@@ -1,23 +1,16 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import {
-    setAuth,
-    useSetEmail,
-    useSetPassword,
-    useEmail,
-    usePassword,
-    useSetPage,
-} from '@/app/stores/profileStore';
+import { useAuthActions } from '@/app/stores/profileStore';
+import { useState } from 'react';
+import Link from 'next/link';
 export default function Auth() {
     const router = useRouter();
-    const goToPage = useSetPage();
-    const setEmail = useSetEmail();
-    const setPassword = useSetPassword();
-    const email = useEmail();
-    const password = usePassword();
+    const [email, setEmail] = useState('');
+    const { handleAuth } = useAuthActions();
+    const [password, setPassword] = useState('');
     const submitAuth = (e: React.SubmitEvent) => {
         e.preventDefault();
-        setAuth(email, password, router);
+        handleAuth(email, password, router);
     };
 
     return (
@@ -56,13 +49,13 @@ export default function Auth() {
                     >
                         Войти
                     </button>
-                    <button
+                    <Link
                         type="button"
-                        onClick={() => goToPage(router, '/Registration')}
-                        className="h-10 w-30 cursor-pointer rounded-2xl bg-white text-center text-purple-800 transition-all duration-200 ease-in-out hover:border hover:border-white hover:bg-purple-700 hover:text-white"
+                        href={'/Registration'}
+                        className="flex h-10 w-30 cursor-pointer items-center justify-center rounded-2xl bg-white text-center text-purple-800 transition-all duration-200 ease-in-out hover:border hover:border-white hover:bg-purple-700 hover:text-white"
                     >
                         Регистрация
-                    </button>
+                    </Link>
                 </div>
             </form>
         </div>

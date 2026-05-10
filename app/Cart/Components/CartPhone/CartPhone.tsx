@@ -1,16 +1,13 @@
 import { LuTrash2, LuMinus, LuPlus } from 'react-icons/lu';
 import Image from 'next/image';
-import {
-    useRemoveCart,
-    useUpdateQuantity,
-} from './../../../stores/profileStore';
+import { useCartActions } from './../../../stores/profileStore';
 import { ICartItem } from '@/app/stores/profileStore';
 interface ICartPhone {
     cartPhone: ICartItem;
 }
 export default function CartPhone({ cartPhone }: ICartPhone) {
-    const deletePhone = useRemoveCart();
-    const updateQuantity = useUpdateQuantity();
+    const { removeFromCart, updateQuantity } = useCartActions();
+
     return (
         <div className="flex w-3xl justify-between rounded-3xl border border-gray-100 bg-white p-5">
             <div className="flex gap-5">
@@ -62,7 +59,7 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
             </div>
             <div className="flex flex-col items-end justify-between text-right">
                 <button
-                    onClick={() => deletePhone(cartPhone.id)}
+                    onClick={() => removeFromCart(cartPhone.id)}
                     className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
                 >
                     <LuTrash2 className="h-4 w-4" />

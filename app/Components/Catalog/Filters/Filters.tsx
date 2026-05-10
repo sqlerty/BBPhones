@@ -3,27 +3,24 @@ import { AnimatePresence, motion } from 'motion/react';
 import { FilterItems } from '../CatalogData';
 import {
     usePhones,
-    useSetCategory,
-    useSetBrands,
-    useSetPriceRange,
-    useSelectedCategory,
     useSelectedBrands,
+    useSelectedCategory,
     usePriceRange,
     useClearFilters,
+    useCatalogActions,
 } from '@/app/stores/catalogStore';
 
 export default function Filters() {
     const phones = usePhones();
     const brands = Array.from(
-        new Set(phones.map((p) => p.categories?.name))
+        new Set(phones.map((p) => p.category.name))
     ).filter(Boolean);
-    const setCategory = useSetCategory();
-    const setBrands = useSetBrands();
-    const setPriceRange = useSetPriceRange();
+
     const selectedCategory = useSelectedCategory();
     const selectedBrands = useSelectedBrands();
     const priceRange = usePriceRange();
     const clearFilters = useClearFilters();
+    const { setCategory, setBrands, setPriceRange } = useCatalogActions();
     return (
         <AnimatePresence>
             <motion.aside
@@ -38,7 +35,7 @@ export default function Filters() {
                             <h3 className="text-lg font-bold">Фильтры</h3>
                             <button
                                 onClick={() => clearFilters()}
-                                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                                className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-700"
                             >
                                 Сбросить
                             </button>

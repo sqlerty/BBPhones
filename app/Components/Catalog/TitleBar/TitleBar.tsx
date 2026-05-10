@@ -1,10 +1,10 @@
 'use client';
 import { LuSlidersHorizontal } from 'react-icons/lu';
-import { useSetFilter } from '@/app/stores/catalogStore';
+import { useCatalogActions } from '@/app/stores/catalogStore';
 import SearchPhones from './SearchPhones/SearchPhones';
 
 export default function TitleBar() {
-    const setFilter = useSetFilter();
+    const { setFilter } = useCatalogActions();
     return (
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pt-10 pb-10">
             <div className="flex flex-col gap-2">

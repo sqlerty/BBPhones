@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useFavoritePhones } from '@/app/stores/profileStore';
-import { useSetInfoPhone } from '@/app/stores/catalogStore';
+import { useCatalogActions } from '@/app/stores/catalogStore';
 import { LuHeart } from 'react-icons/lu';
 
 export default function UserFavorites() {
     const favoritePhones = useFavoritePhones();
-    const setInfoPhone = useSetInfoPhone();
+    const { setInfoPhone } = useCatalogActions();
     return (
         <div className="grid grid-cols-2 gap-3 p-5">
             {favoritePhones.map((phone) => (
@@ -30,13 +30,13 @@ export default function UserFavorites() {
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="mb-1 text-xs font-bold text-blue-600 uppercase">
-                            {phone.categories?.name}
+                            {phone.category.name}
                         </div>
                         <div className="mb-2 truncate font-bold text-gray-900 transition-colors group-hover:text-blue-600">
                             {phone.name}
                         </div>
                         <div className="text-lg font-extrabold text-gray-900">
-                            {phone.price} ₽
+                            {Number(phone.price)} ₽
                         </div>
                     </div>
                 </Link>

@@ -1,18 +1,17 @@
 'use client';
 import { IoSearch } from 'react-icons/io5';
 import {
-    setSearchedPhones,
     useSearchedPhones,
     useSearchWord,
-    useSetInfoPhone,
+    useCatalogActions,
 } from '@/app/stores/catalogStore';
 import Image from 'next/image';
 import Link from 'next/link';
 export default function SearchPhones() {
     const searchWord = useSearchWord();
     const searchedPhones = useSearchedPhones();
-    const setSearchWord = setSearchedPhones;
-    const setInfoPhone = useSetInfoPhone();
+
+    const { setSearch, setInfoPhone } = useCatalogActions();
     return (
         <div className="w-xl">
             <div className="flex gap-4">
@@ -22,13 +21,13 @@ export default function SearchPhones() {
                         type="text"
                         placeholder="Поиск по моделям..."
                         value={searchWord}
-                        onChange={(e) => setSearchWord(e.target.value)}
+                        onChange={(e) => setSearch(e.target.value)}
                         className="w-xl rounded-xl border border-gray-200 bg-white py-3 pr-4 pl-12 shadow-sm transition-all outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                     />
                 </div>
             </div>
             {searchWord && (
-                <div className="absolute flex w-xl flex-col overflow-hidden rounded-b-3xl">
+                <div className="absolute z-100 flex w-xl flex-col overflow-hidden rounded-b-3xl">
                     {searchedPhones.map((phone) => (
                         <div
                             className="flex h-20 w-full justify-between border-b border-b-gray-100 bg-white p-3"
@@ -53,7 +52,7 @@ export default function SearchPhones() {
                                 </Link>
                             </div>
                             <p className="self-center text-xl font-medium text-black">
-                                {phone.price} Р
+                                {Number(phone.price)} Р
                             </p>
                         </div>
                     ))}

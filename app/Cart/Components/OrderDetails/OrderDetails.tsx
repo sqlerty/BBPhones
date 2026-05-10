@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { LuShieldCheck, LuLock } from 'react-icons/lu';
-import { useCartAmount } from '@/app/stores/profileStore';
+import { useCartAmount, useCartActions } from '@/app/stores/profileStore';
 
 export default function OrderDetails() {
     const cartAmount = useCartAmount();
+    const { createOrder } = useCartActions();
     return (
         <div className="sticky top-28 flex h-1/12 w-full flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20">
             <div className="pb-5">
@@ -31,7 +32,15 @@ export default function OrderDetails() {
                     </span>
                 </div>
                 <div className="mt-8 flex flex-col gap-4">
-                    <button className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-500 active:scale-95">
+                    <button
+                        onClick={() =>
+                            createOrder(
+                                'Великий Новгород,менделеева,18',
+                                '+77777777777'
+                            )
+                        }
+                        className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-500 active:scale-95"
+                    >
                         Перейти к оформлению
                     </button>
                     <Link
