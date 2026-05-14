@@ -61,7 +61,7 @@ export default function PhoneDetail({ phone }: IDetail) {
                             <IoIosArrowForward size={24} />
                         </button>
                         <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
-                            {phone?.images.map((_, index) => (
+                            {phone?.images.map((_: string, index: number) => (
                                 <div
                                     key={index}
                                     className={`h-1.5 rounded-full transition-all duration-300 ${
