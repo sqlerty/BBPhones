@@ -18,7 +18,7 @@ export async function GET() {
         const orders = await prisma.orders.findMany();
 
         const totalRevenue = orders.reduce(
-            (sum, order) => sum + Number(order.totalAmount),
+            (sum: number, order) => sum + Number(order.totalAmount),
             0
         );
         const totalOrders = orders.length;
