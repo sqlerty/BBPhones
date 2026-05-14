@@ -76,7 +76,7 @@ export default function PhoneDetail({ phone }: IDetail) {
 
                     {phone!.images.length > 1 && (
                         <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">
-                            {phone?.images.map((img, index) => (
+                            {phone?.images.map((img: string, index: number) => (
                                 <button
                                     key={index}
                                     onClick={() => setCurrentIndex(index)}
