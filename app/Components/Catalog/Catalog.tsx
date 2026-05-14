@@ -11,7 +11,7 @@ export default function Catalog() {
             <div className="mx-auto max-w-7xl">
                 <TitleBar />
                 <SortBar />
-                <div className="flex gap-10">
+                <div className="flex gap-5 max-md:flex-col">
                     {isFilter && (
                         <div className="p-5">
                             <Filters />

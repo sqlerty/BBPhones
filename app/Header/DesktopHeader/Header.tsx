@@ -1,16 +1,17 @@
 'use client';
 import { IoPhonePortraitOutline } from 'react-icons/io5';
-import { useUser, useIsAdmin } from '../stores/profileStore';
+import { useUser, useIsAdmin } from '../../stores/profileStore';
 import { useCartCount } from '@/app/stores/profileStore';
-import { navLinks } from './HeaderData';
+import { navLinks } from '../HeaderData';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function Header() {
     const user = useUser();
     const isAdmin = useIsAdmin();
     const cartLength = useCartCount();
     const pathname = usePathname();
+    const router = useRouter();
     const filteredLinks = navLinks.filter((link) => {
         if (link.adminOnly) {
             return user?.role === 'ADMIN' && isAdmin;
@@ -21,7 +22,7 @@ export default function Header() {
         <div className="h-20 bg-gray-50">
             <div className="mx-auto flex max-w-7xl items-center justify-between p-5">
                 <Link href="/" className="group flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white group-hover:scale-105">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white transition-all ease-in-out group-hover:scale-105">
                         <IoPhonePortraitOutline className="h-6 w-6" />
                     </div>
                     <h2 className="text-xl font-bold">
@@ -35,8 +36,17 @@ export default function Header() {
                         return (
                             <Link
                                 key={link.to}
-                                href={user ? link.to : link.dopTo || ''}
+                                href={link.to}
                                 className={`relative flex h-10 cursor-pointer items-center justify-center gap-2 rounded-2xl px-3 ${isActive ? 'bg-blue-50 font-medium text-blue-600' : 'text-gray-600 hover:bg-gray-100/50 hover:text-gray-900'}`}
+                                onClick={(e) => {
+                                    if (!user && link.requariesAuth) {
+                                        e.preventDefault();
+                                        alert(
+                                            'Пожалуйста, авторизуйтесь для доступа к этому разделу'
+                                        );
+                                        router.push('/Authorization');
+                                    }
+                                }}
                             >
                                 <link.icon className="h-6 w-6" />
                                 <p>{link.label}</p>

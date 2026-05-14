@@ -19,7 +19,7 @@ export default function Cart() {
     return (
         <div className="bg-gray-50">
             <div className="mx-auto flex max-w-7xl flex-col px-5 py-10">
-                <div className="flex items-end justify-between">
+                <div className="flex items-end justify-between max-md:flex-col max-md:items-start max-md:gap-5">
                     <div className="flex flex-col gap-3">
                         <h2 className="text-3xl font-extrabold">
                             Ваша корзина
@@ -36,7 +36,7 @@ export default function Cart() {
                         Очистить всё
                     </button>
                 </div>
-                <div className="flex justify-between gap-10 py-10">
+                <div className="flex justify-between gap-10 py-10 max-md:flex-col">
                     <div className="flex flex-col gap-5">
                         {cartPhones.map((cartPhone) => (
                             <CartPhone

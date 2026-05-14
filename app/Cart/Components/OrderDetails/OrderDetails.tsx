@@ -27,7 +27,7 @@ export default function OrderDetails() {
                     <span className="font-medium text-gray-300">
                         Итого к оплате
                     </span>
-                    <span className="text-3xl font-extrabold text-white">
+                    <span className="text-3xl font-extrabold text-white max-md:text-xl">
                         {cartAmount.toLocaleString()} ₽
                     </span>
                 </div>

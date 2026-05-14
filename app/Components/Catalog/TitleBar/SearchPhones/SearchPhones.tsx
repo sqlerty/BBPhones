@@ -13,28 +13,27 @@ export default function SearchPhones() {
 
     const { setSearch, setInfoPhone } = useCatalogActions();
     return (
-        <div className="w-xl">
-            <div className="flex gap-4">
-                <div className="group relative">
-                    <IoSearch className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-blue-500" />
-                    <input
-                        type="text"
-                        placeholder="Поиск по моделям..."
-                        value={searchWord}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-xl rounded-xl border border-gray-200 bg-white py-3 pr-4 pl-12 shadow-sm transition-all outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                    />
-                </div>
+        <div className="w-xl max-md:w-full">
+            <div className="group relative">
+                <IoSearch className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-blue-500" />
+                <input
+                    type="text"
+                    placeholder="Поиск по моделям..."
+                    value={searchWord}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-xl rounded-xl border border-gray-200 bg-white py-3 pr-4 pl-12 shadow-sm transition-all outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 max-md:w-full"
+                />
             </div>
+
             {searchWord && (
-                <div className="absolute z-100 flex w-xl flex-col overflow-hidden rounded-b-3xl">
+                <div className="absolute z-100 flex w-xl flex-col overflow-hidden rounded-b-3xl max-md:w-full">
                     {searchedPhones.map((phone) => (
                         <div
                             className="flex h-20 w-full justify-between border-b border-b-gray-100 bg-white p-3"
                             key={phone.id}
                         >
-                            <div className="flex items-center">
-                                <div className="h-full w-30">
+                            <div className="flex items-center gap-2">
+                                <div className="h-full w-30 max-md:w-15">
                                     <Image
                                         src={phone.images[0]}
                                         alt={phone.name}
@@ -51,7 +50,7 @@ export default function SearchPhones() {
                                     {phone.name}
                                 </Link>
                             </div>
-                            <p className="self-center text-xl font-medium text-black">
+                            <p className="self-center text-xl font-medium text-black max-md:text-lg">
                                 {Number(phone.price)} Р
                             </p>
                         </div>

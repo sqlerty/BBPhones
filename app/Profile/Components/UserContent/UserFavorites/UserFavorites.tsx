@@ -8,7 +8,7 @@ export default function UserFavorites() {
     const favoritePhones = useFavoritePhones();
     const { setInfoPhone } = useCatalogActions();
     return (
-        <div className="grid grid-cols-2 gap-3 p-5">
+        <div className="grid w-full grid-cols-2 gap-3 p-5 max-md:grid-cols-1">
             {favoritePhones.map((phone) => (
                 <Link
                     key={phone.id}

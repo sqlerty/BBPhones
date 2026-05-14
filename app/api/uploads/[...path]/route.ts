@@ -2,25 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
-// 1. Описываем тип для параметров (важно для Next.js 15)
 type RouteParams = {
     params: Promise<{ path: string[] }>;
 };
 
-export async function GET(
-    req: NextRequest,
-    { params }: RouteParams // Используем типизацию здесь
-) {
+export async function GET(req: NextRequest, { params }: RouteParams) {
     try {
-        // 2. Обязательно авейтим params целиком (фишка Next.js 15)
         const { path: pathParts } = await params;
-
-        // 3. Собираем ПОЛНЫЙ путь от корня проекта
         const filePath = path.join(process.cwd(), 'uploads', ...pathParts);
 
         const fileBuffer = await readFile(filePath);
-
-        // 4. ТИПИЗАЦИЯ БЕЗ ANY: Указываем Record<string, string>
         const ext = path.extname(filePath).toLowerCase();
         const mimeTypes: Record<string, string> = {
             '.jpg': 'image/jpeg',

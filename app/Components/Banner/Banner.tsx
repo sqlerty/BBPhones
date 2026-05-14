@@ -1,10 +1,11 @@
+'use client';
 import { FaArrowRight } from 'react-icons/fa6';
 import PhotoPhone from './Components/PhotoPhone';
 
 export default function Banner() {
     return (
         <div className="bg-gray-50">
-            <div className="mx-auto flex max-w-7xl items-center gap-10 px-5 pt-25 pb-10">
+            <div className="mx-auto flex max-w-7xl items-center gap-10 px-5 pt-25 pb-10 max-md:flex-col-reverse max-md:pt-5">
                 <div className="flex flex-col gap-10">
                     <div className="inline-flex w-68 items-center gap-2 rounded-full border border-blue-200/50 bg-blue-100/80 px-3 py-1 text-sm font-medium text-blue-700">
                         <span className="relative flex h-2 w-2">
@@ -13,7 +14,7 @@ export default function Banner() {
                         </span>
                         Новинки 2026 года уже в продаже
                     </div>
-                    <h1 className="w-120 text-5xl font-extrabold">
+                    <h1 className="w-120 text-5xl font-extrabold max-md:w-full max-md:text-5xl max-md:text-wrap">
                         Технологии будущего в{' '}
                         <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                             твоих руках
@@ -25,13 +26,22 @@ export default function Banner() {
                         двери.
                     </p>
                     <div className="flex items-center gap-4">
-                        <button className="group flex cursor-pointer items-center gap-2 rounded-xl bg-gray-900 px-8 py-4 font-medium text-white shadow-lg transition-all hover:bg-gray-800">
+                        <button
+                            onClick={() =>
+                                document
+                                    .getElementById('catalog')
+                                    ?.scrollIntoView({ behavior: 'smooth' })
+                            }
+                            className="group flex cursor-pointer items-center gap-2 rounded-xl bg-gray-900 px-8 py-4 font-medium text-white shadow-lg transition-all hover:bg-gray-800"
+                        >
                             В каталог
                             <FaArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
                 </div>
-                <PhotoPhone />
+                <div>
+                    <PhotoPhone />
+                </div>
             </div>
         </div>
     );

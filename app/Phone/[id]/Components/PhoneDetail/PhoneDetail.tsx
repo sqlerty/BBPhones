@@ -15,7 +15,6 @@ interface IDetail {
 export default function PhoneDetail({ phone }: IDetail) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Функции переключения
     const prevSlide = () => {
         const isFirstSlide = currentIndex === 0;
         const newIndex = isFirstSlide
@@ -38,8 +37,8 @@ export default function PhoneDetail({ phone }: IDetail) {
                 <LuArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 Назад в каталог
             </Link>
-            <div className="mt-10 flex w-full overflow-hidden rounded-3xl border border-gray-100 shadow-sm">
-                <div className="flex w-1/2 flex-col items-center justify-center gap-4">
+            <div className="mt-10 flex w-full overflow-hidden rounded-3xl border border-gray-100 shadow-sm max-md:flex-col">
+                <div className="flex w-1/2 flex-col items-center justify-center gap-4 max-md:w-full">
                     <div className="group relative aspect-square w-full overflow-hidden rounded-4xl">
                         <Image
                             src={phone?.images[currentIndex] || ''}
@@ -98,7 +97,7 @@ export default function PhoneDetail({ phone }: IDetail) {
                         </div>
                     )}
                 </div>
-                <div className="flex w-1/2 flex-col gap-7 bg-white p-10">
+                <div className="flex w-1/2 flex-col gap-7 bg-white p-10 max-md:w-full">
                     <div>
                         <p className="mb-2 text-sm font-bold text-blue-600 uppercase">
                             {phone?.category.name}

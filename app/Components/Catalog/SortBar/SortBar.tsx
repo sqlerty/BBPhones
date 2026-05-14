@@ -5,7 +5,7 @@ export default function SortBar() {
     const sort = useSort();
     const { setSort } = useCatalogActions();
     return (
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pb-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 pb-5 max-md:flex-col max-md:gap-5">
             <PhonesLength />
             <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500 sm:inline">

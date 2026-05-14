@@ -2,6 +2,7 @@ import { LuTrash2, LuMinus, LuPlus } from 'react-icons/lu';
 import Image from 'next/image';
 import { useCartActions } from './../../../stores/profileStore';
 import { ICartItem } from '@/app/stores/profileStore';
+import Link from 'next/link';
 interface ICartPhone {
     cartPhone: ICartItem;
 }
@@ -9,71 +10,77 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
     const { removeFromCart, updateQuantity } = useCartActions();
 
     return (
-        <div className="flex w-3xl justify-between rounded-3xl border border-gray-100 bg-white p-5">
-            <div className="flex gap-5">
-                <div className="flex h-40 w-32 items-center justify-center rounded-2xl bg-gray-50 p-4">
+        <div className="flex w-3xl justify-between rounded-3xl border border-gray-100 bg-white p-5 max-md:w-full">
+            <div className="flex w-full gap-5 max-md:flex-col">
+                <div className="flex h-40 w-40 items-center justify-center rounded-2xl bg-gray-50 p-4 max-md:w-full max-md:self-center">
                     <Image
                         src={cartPhone.image}
                         alt="Phone"
                         width={500}
                         height={500}
+                        className="object-contain max-md:h-35 max-md:w-40"
                     />
                 </div>
-                <div className="flex flex-col justify-between">
-                    <div className="flex flex-col gap-2">
-                        <div>
-                            <p className="text-xs font-bold text-blue-600 uppercase">
-                                {cartPhone.category}
-                            </p>
-                            <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
-                                {cartPhone.name}
+                <div className="flex w-full justify-between">
+                    <div className="flex flex-col justify-between max-md:gap-10">
+                        <div className="flex flex-col gap-2">
+                            <Link
+                                href={`/Phone/${cartPhone.name}`}
+                                className="group"
+                            >
+                                <p className="text-xs font-bold text-blue-600 uppercase">
+                                    {cartPhone.category}
+                                </p>
+                                <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
+                                    {cartPhone.name}
+                                </h3>
+                            </Link>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                                    {cartPhone.ram} ГБ RAM
+                                </span>
+                                <span className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                                    {cartPhone.storage} ГБ
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex max-w-30 items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-1">
+                            <button
+                                onClick={() => updateQuantity(cartPhone.id, -1)}
+                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm disabled:opacity-50"
+                            >
+                                <LuMinus className="h-4 w-4" />
+                            </button>
+                            <span className="w-10 text-center font-bold text-gray-900">
+                                {cartPhone.quantity}
+                            </span>
+                            <button
+                                onClick={() => updateQuantity(cartPhone.id, 1)}
+                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm"
+                            >
+                                <LuPlus className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-end justify-between text-right">
+                        <button
+                            onClick={() => removeFromCart(cartPhone.id)}
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
+                        >
+                            <LuTrash2 className="h-4 w-4" />
+                        </button>
+                        <div className="flex flex-col gap-1">
+                            <span className="text-xs font-medium text-gray-400">
+                                Цена за шт: {cartPhone.price} ₽
+                            </span>
+                            <h3 className="text-xl font-extrabold">
+                                {(
+                                    cartPhone.price * cartPhone.quantity
+                                ).toLocaleString()}{' '}
+                                ₽
                             </h3>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                            <span className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                                {cartPhone.ram} ГБ RAM
-                            </span>
-                            <span className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                                {cartPhone.storage} ГБ
-                            </span>
-                        </div>
                     </div>
-                    <div className="flex max-w-30 items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-1">
-                        <button
-                            onClick={() => updateQuantity(cartPhone.id, -1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm disabled:opacity-50"
-                        >
-                            <LuMinus className="h-4 w-4" />
-                        </button>
-                        <span className="w-10 text-center font-bold text-gray-900">
-                            {cartPhone.quantity}
-                        </span>
-                        <button
-                            onClick={() => updateQuantity(cartPhone.id, 1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm"
-                        >
-                            <LuPlus className="h-4 w-4" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col items-end justify-between text-right">
-                <button
-                    onClick={() => removeFromCart(cartPhone.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
-                >
-                    <LuTrash2 className="h-4 w-4" />
-                </button>
-                <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-gray-400">
-                        Цена за шт: {cartPhone.price} ₽
-                    </span>
-                    <h3 className="text-xl font-extrabold">
-                        {(
-                            cartPhone.price * cartPhone.quantity
-                        ).toLocaleString()}{' '}
-                        ₽
-                    </h3>
                 </div>
             </div>
         </div>

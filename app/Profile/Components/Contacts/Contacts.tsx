@@ -4,7 +4,7 @@ import { useUser } from '@/app/stores/profileStore';
 export default function Contacts() {
     const user = useUser();
     return (
-        <div className="w-md rounded-2xl bg-white p-10">
+        <div className="w-md rounded-2xl bg-white p-10 max-md:w-full">
             <h2 className="mb-5 text-xl font-bold">Контактные данные</h2>
             <div className="flex flex-col gap-5">
                 <div className="flex w-full items-center gap-5">

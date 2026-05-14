@@ -26,7 +26,7 @@ export default function PhoneCard({ phone }: IPhoneCard) {
     return (
         <div
             key={phone.id}
-            className={`group flex ${isFilter ? 'h-fit w-72' : 'h-130 w-100'} flex-col overflow-hidden rounded-2xl border border-gray-100 transition-all duration-200 ease-in-out hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5`}
+            className={`group flex ${isFilter ? 'h-fit w-70' : 'h-130 w-100 max-md:h-fit max-md:w-80'} flex-col overflow-hidden rounded-2xl border border-gray-100 transition-all duration-200 ease-in-out hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5`}
         >
             <div className="relative h-75 w-full bg-gray-50 p-10">
                 <button

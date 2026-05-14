@@ -2,13 +2,9 @@ import { create, StateCreator } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 import { Products, Categories, Users, Orders } from '@prisma/client';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 type EntityData = Products | Categories | Users | Orders;
-
-interface ApiError {
-    error: string;
-}
 
 interface IAdmin {
     adminTab: string;
@@ -28,19 +24,16 @@ interface IAdmin {
     deleteItem: (id: string) => Promise<void>;
 }
 
-interface IDistributionBySegments {
+export interface IDistributionBySegments {
     name: string;
     value: number;
 }
-interface ISegmentChartData {
+export interface ISegmentChartData {
     name: string;
     sales: number;
 }
-interface ISalesByDay {
-    name: string;
-    value: number;
-}
-interface ITopModel {
+
+export interface ITopModel {
     name: string;
     value: number;
 }
@@ -54,7 +47,6 @@ export interface IAdminStats {
     };
     salesByBrands: ISegmentChartData[];
     distributionBySegments: IDistributionBySegments[];
-    salesByDay: ISalesByDay[];
     topSellingModels: ITopModel[];
 }
 
@@ -84,7 +76,8 @@ const adminManageSlice: StateCreator<
         set({ currentEntity: word });
     },
     fetchData: async (entity) => {
-        set({ isLoadingManage: true, currentEntity: entity, data: [] });
+        set({ isLoadingManage: true, currentEntity: entity });
+
         try {
             const { data } = await axios.get<EntityData[]>(
                 `/api/admin/${entity}`
@@ -96,51 +89,31 @@ const adminManageSlice: StateCreator<
         }
     },
     createItem: async (payload) => {
-        const { currentEntity } = get();
+        const { currentEntity, fetchData } = get();
         set({ isLoadingManage: true });
         try {
-            const { data: newItem } = await axios.post<EntityData>(
-                `/api/admin/${currentEntity}`,
-                payload
-            );
-            set((state) => ({
-                data: [newItem, ...state.data],
-                isLoading: false,
-            }));
+            await axios.post(`/api/admin/${currentEntity}`, payload);
+            await fetchData(currentEntity);
             return true;
         } catch (err: unknown) {
             set({ isLoadingManage: false });
             if (axios.isAxiosError(err)) {
-                const serverError = err as AxiosError<ApiError>;
-                alert(
-                    serverError.response?.data?.error || 'Ошибка при создании'
-                );
+                alert(err.response?.data?.error || 'Ошибка при создании');
             }
             return false;
         }
     },
     updateItem: async (id, payload) => {
-        const { currentEntity } = get();
+        const { currentEntity, fetchData } = get();
         set({ isLoadingManage: true });
         try {
-            const { data: updatedItem } = await axios.put<EntityData>(
-                `/api/admin/${currentEntity}`,
-                { id, ...payload }
-            );
-            set((state) => ({
-                data: state.data.map((item) =>
-                    item.id === id ? updatedItem : item
-                ),
-                isLoading: false,
-            }));
+            await axios.put(`/api/admin/${currentEntity}`, { id, ...payload });
+            await fetchData(currentEntity);
             return true;
         } catch (err: unknown) {
             set({ isLoadingManage: false });
             if (axios.isAxiosError(err)) {
-                const serverError = err as AxiosError<ApiError>;
-                alert(
-                    serverError.response?.data?.error || 'Ошибка при обновлении'
-                );
+                alert(err.response?.data?.error || 'Ошибка при обновлении');
             }
             return false;
         }

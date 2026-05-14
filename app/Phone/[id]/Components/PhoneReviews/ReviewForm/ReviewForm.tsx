@@ -27,7 +27,7 @@ export default function ReviewForm({ phoneId, reviews }: IRewiewForm) {
     return (
         <div className="space-y-6 lg:col-span-1">
             <div className="flex flex-col items-center justify-center rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-                <div className="mb-2 text-5xl font-black text-gray-900">
+                <div className="mb-2 text-5xl font-black text-gray-900 max-md:text-4xl">
                     {!isNaN(Number(averageRating)) ? averageRating : 0}
                 </div>
                 <div className="mb-2 flex justify-center gap-1">

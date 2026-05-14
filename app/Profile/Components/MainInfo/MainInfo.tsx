@@ -20,7 +20,7 @@ export default function MainInfo() {
     const favoriteLength = useFavoriteLength();
     const ordersLength = useOrdersLength();
     return (
-        <div className="flex w-md flex-col gap-5 rounded-2xl bg-white p-10">
+        <div className="flex w-md flex-col gap-5 rounded-2xl bg-white p-10 max-md:w-full">
             <div className="flex h-24 w-24 items-center justify-center self-center rounded-full border-4 border-white bg-white shadow-xl shadow-blue-900/5">
                 <Image
                     src={
@@ -40,13 +40,13 @@ export default function MainInfo() {
                 <p className="font-medium text-gray-500">{user?.email}</p>
             </div>
             <div className="flex justify-between gap-5">
-                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl bg-gray-50 max-md:w-30">
                     <h2 className="text-2xl font-black">{ordersLength}</h2>
                     <p className="text-sm font-medium text-gray-500 uppercase">
                         Заказов
                     </p>
                 </div>
-                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl bg-gray-50">
+                <div className="flex h-20 w-50 flex-col items-center justify-center rounded-2xl bg-gray-50 max-md:w-30">
                     <h2 className="text-2xl font-black">{favoriteLength}</h2>
                     <p className="text-sm font-medium text-gray-500 uppercase">
                         Избранных
@@ -71,7 +71,9 @@ export default function MainInfo() {
                     >
                         <div className="flex items-center gap-4">
                             <LuShield className="h-5 w-5 text-gray-400 transition-colors group-hover:text-blue-500" />
-                            <p>Режим администратора</p>
+                            <p className="max-md:text-left">
+                                Режим администратора
+                            </p>
                         </div>
                         <LuChevronRight className="h-4 w-4 text-gray-300" />
                     </button>

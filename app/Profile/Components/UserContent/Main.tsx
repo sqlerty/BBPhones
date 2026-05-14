@@ -10,7 +10,7 @@ export default function UserContent() {
     const { setActiveTab } = useFavoriteActions();
 
     return (
-        <div className="w-full overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+        <div className="h-auto w-full overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
             <div className="flex border-b border-gray-100 px-2 pt-2 sm:px-6">
                 <button
                     onClick={() => setActiveTab('orders')}

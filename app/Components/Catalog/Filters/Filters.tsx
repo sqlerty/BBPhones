@@ -25,11 +25,11 @@ export default function Filters() {
         <AnimatePresence>
             <motion.aside
                 initial={{ opacity: 0, width: 0, x: -20 }}
-                animate={{ opacity: 1, width: 280, x: 0 }}
+                animate={{ opacity: 1, width: '100%', x: 0 }}
                 exit={{ opacity: 0, width: 0, x: -20 }}
-                className="shrink-0 lg:block"
+                className="shrink-0 max-md:w-full lg:block"
             >
-                <div className="sticky top-28 mx-auto flex h-fit w-xs flex-col divide-y divide-gray-100 rounded-3xl bg-white p-5 shadow-2xl">
+                <div className="sticky top-28 mx-auto flex h-fit w-xs flex-col divide-y divide-gray-100 rounded-3xl bg-white p-5 shadow-2xl max-md:w-full">
                     <div className="mb-5 pb-5">
                         <div className="mb-10 flex justify-between">
                             <h3 className="text-lg font-bold">Фильтры</h3>

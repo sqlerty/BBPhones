@@ -14,6 +14,7 @@ export async function GET() {
         const user = await prisma.users.findUnique({ where: { id: userId } });
         if (user?.role !== 'ADMIN')
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
         const orders = await prisma.orders.findMany();
 
         const totalRevenue = orders.reduce(

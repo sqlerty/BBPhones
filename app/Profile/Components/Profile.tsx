@@ -12,15 +12,16 @@ export default function Profile() {
                 <h1 className="mb-10 text-3xl font-extrabold">
                     Личный кабинет
                 </h1>
-                <div className="flex gap-10">
-                    <div className="flex flex-col gap-10">
+                <div className="flex gap-10 max-md:flex-col">
+                    <div className="flex flex-col gap-10 max-md:w-full">
                         <MainInfo />
                         <Contacts />
                     </div>
+
                     <UserContent />
                 </div>
             </div>
-            {activeModal && <ProfileModal />}
+            {activeModal === 'Settings' && <ProfileModal />}
         </div>
     );
 }

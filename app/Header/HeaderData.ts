@@ -4,18 +4,19 @@ import { MdOutlinePersonOutline } from 'react-icons/md';
 import { LuShield } from 'react-icons/lu';
 
 export const navLinks = [
-    { to: '/', icon: FiHome, label: 'Главная' },
-    { to: '/Cart', icon: IoCartOutline, label: 'Корзина' },
+    { to: '/', icon: FiHome, label: 'Главная', requariesAuth: false },
+    { to: '/Cart', icon: IoCartOutline, label: 'Корзина', requariesAuth: true },
     {
         to: '/Profile',
         icon: MdOutlinePersonOutline,
         label: 'Профиль',
-        dopTo: '/Authorization',
+        requariesAuth: true,
     },
     {
         to: '/Admin',
         icon: LuShield,
         label: 'Админ-Панель',
+        requariesAuth: true,
         adminOnly: true,
     },
 ];

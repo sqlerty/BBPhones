@@ -15,7 +15,7 @@ export default function TotalCost({ phone }: ITotalCost) {
                     Итоговая цена
                 </div>
                 <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-extrabold tracking-tight text-gray-900">
+                    <span className="text-4xl font-extrabold tracking-tight text-gray-900 max-md:text-2xl">
                         {Number(phone?.price).toLocaleString()} ₽
                     </span>
                 </div>
@@ -24,7 +24,7 @@ export default function TotalCost({ phone }: ITotalCost) {
             <button
                 onClick={() => addToCart(phone!)}
                 disabled={!phone?.stock}
-                className={`flex flex-1 items-center justify-center gap-3 rounded-xl px-8 py-4 font-bold shadow-sm transition-all sm:flex-none ${
+                className={`flex flex-1 items-center justify-center gap-3 rounded-xl px-8 py-4 font-bold shadow-sm transition-all max-md:px-6 max-md:py-3 sm:flex-none ${
                     phone?.stock
                         ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/20 active:scale-95'
                         : 'cursor-not-allowed bg-gray-100 text-gray-400'

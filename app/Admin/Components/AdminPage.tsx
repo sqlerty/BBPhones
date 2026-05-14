@@ -1,12 +1,14 @@
 'use client';
 import { useAdminActions, useAdminTab } from '@/app/stores/adminStore';
 import { motion } from 'motion/react';
-import Management from './Mangement.tsx/Management';
+import { useActiveModal } from '@/app/stores/modalStore';
+import Management from './Mangement/Management';
 import Stats from './Stats/Stats';
+import AdminModal from '@/app/modals/AdminModal/AdminModal';
 export default function AdminPage() {
     const { setAdminTab } = useAdminActions();
     const adminTab = useAdminTab();
-
+    const activeModal = useActiveModal();
     return (
         <div className="mx-auto max-w-7xl px-5 py-10">
             <h1 className="mb-10 text-2xl font-bold">Панель администратора</h1>
@@ -19,7 +21,7 @@ export default function AdminPage() {
                             : 'text-gray-500 hover:text-gray-900'
                     }`}
                 >
-                    <span className="hidden sm:inline">Аналитика</span>
+                    <span className="sm:inline">Аналитика</span>
                     {adminTab === 'Analytics' && (
                         <motion.div
                             layoutId="tab-indicator"
@@ -46,6 +48,7 @@ export default function AdminPage() {
             </div>
             {adminTab === 'Management' && <Management />}
             {adminTab === 'Analytics' && <Stats />}
+            {activeModal === 'Admin' && <AdminModal />}
         </div>
     );
 }
