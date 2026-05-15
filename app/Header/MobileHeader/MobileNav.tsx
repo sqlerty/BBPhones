@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { navLinks } from '../HeaderData';
 import { useCartCount, useIsAdmin, useUser } from '@/app/stores/profileStore';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface IMobile {
     setMobileMenu: (i: boolean) => void;
@@ -13,6 +13,7 @@ export default function MobileNav({ setMobileMenu }: IMobile) {
     const isAdmin = useIsAdmin();
     const cartLength = useCartCount();
     const pathname = usePathname();
+    const router = useRouter();
     const filteredLinks = navLinks.filter((link) => {
         if (link.adminOnly) {
             return user?.role === 'ADMIN' && isAdmin;
@@ -35,7 +36,16 @@ export default function MobileNav({ setMobileMenu }: IMobile) {
                             <Link
                                 key={link.to}
                                 href={link.to}
-                                onClick={() => setMobileMenu(false)}
+                                onClick={(e) => {
+                                    setMobileMenu(false);
+                                    if (!user && link.requariesAuth) {
+                                        e.preventDefault();
+                                        alert(
+                                            'Пожалуйста, авторизуйтесь для доступа к этому разделу'
+                                        );
+                                        router.push('/Authorization');
+                                    }
+                                }}
                                 className={`flex items-center space-x-3 rounded-xl px-4 py-3 transition-colors ${
                                     isActive
                                         ? 'bg-blue-50 font-medium text-blue-600'
