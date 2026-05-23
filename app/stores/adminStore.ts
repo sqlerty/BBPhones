@@ -1,10 +1,10 @@
 import { create, StateCreator } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
-import { Products, Categories, Users, Orders } from '@prisma/client';
+import { Phones, Brands, Users, Orders } from '@prisma/client';
 import axios from 'axios';
 
-type EntityData = Products | Categories | Users | Orders;
+type EntityData = Phones | Brands | Users | Orders;
 
 interface IAdmin {
     adminTab: string;
@@ -67,7 +67,7 @@ const adminManageSlice: StateCreator<
 > = (set, get) => ({
     data: [],
     isLoadingManage: false,
-    currentEntity: '',
+    currentEntity: 'phones',
     adminTab: '',
     setAdminTab: (tab) => {
         set({ adminTab: tab });
@@ -154,7 +154,7 @@ const adminStatsSlice: StateCreator<
     },
 });
 
-const useAdminStore = create<IAdminStore>()(
+export const useAdminStore = create<IAdminStore>()(
     devtools(
         persist(
             (...a) => ({

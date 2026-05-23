@@ -13,9 +13,9 @@ export interface IRewiews {
 interface IRewiewsStore {
     reviews: IRewiews[];
     isReviewsLoading: boolean;
-    fetchReviews: (productId: string) => Promise<void>;
+    fetchReviews: (phoneId: string) => Promise<void>;
     addReview: (
-        productId: string,
+        phoneId: string,
         rating: number,
         comment: string
     ) => Promise<boolean>;
@@ -27,22 +27,20 @@ const reviewStore: StateCreator<
 > = (set) => ({
     reviews: [],
     isReviewsLoading: false,
-    fetchReviews: async (productId) => {
+    fetchReviews: async (phoneId) => {
         set({ isReviewsLoading: true });
         try {
-            const { data } = await axios.get(
-                `/api/reviews?productId=${productId}`
-            );
+            const { data } = await axios.get(`/api/reviews?phoneId=${phoneId}`);
             set({ reviews: data, isReviewsLoading: false });
         } catch {
             alert('Ошибка загрузки отзывов!');
             set({ isReviewsLoading: false });
         }
     },
-    addReview: async (productId, rating, comment) => {
+    addReview: async (phoneId, rating, comment) => {
         try {
             const { data } = await axios.post('/api/reviews', {
-                productId,
+                phoneId,
                 rating,
                 comment,
             });

@@ -3,18 +3,21 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
     try {
-        const products = await prisma.products.findMany({
+        const phones = await prisma.phones.findMany({
             include: {
-                category: true,
+                brand: true,
             },
             orderBy: {
                 createdAt: 'desc',
             },
         });
 
-        return NextResponse.json(products);
+        return NextResponse.json(phones);
     } catch (error) {
         console.error('API Error:', error);
-        return NextResponse.json({ error: 'Ошибка при получении данных' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Ошибка при получении данных' },
+            { status: 500 }
+        );
     }
 }

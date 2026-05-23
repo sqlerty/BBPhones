@@ -2,7 +2,7 @@ import Auth from './Components/Auth';
 
 export default function Home() {
     return (
-        <div>
+        <div className="w-full">
             <Auth />
         </div>
     );

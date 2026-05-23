@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const productSchema = z.object({
+export const phoneSchema = z.object({
     name: z.string().min(2, 'Название должно быть длиннее 2 символов'),
     slug: z.string().min(2, 'Slug обязателен'),
     price: z.number().min(0, 'Цена не может быть отрицательной'),
@@ -8,7 +8,7 @@ export const productSchema = z.object({
     ram: z.number().optional().nullable(),
     storage: z.number().optional().nullable(),
     color: z.string().optional().nullable(),
-    categoryId: z.string().min(1, 'Категория обязательна'),
+    brandId: z.string().min(1, 'Бренд обязателен'),
 });
 
 export const userSchema = z.object({
@@ -17,7 +17,7 @@ export const userSchema = z.object({
     role: z.enum(['USER', 'ADMIN']),
 });
 
-export const categorySchema = z.object({
+export const brandSchema = z.object({
     name: z.string().min(2, 'Название слишком короткое'),
     slug: z.string().min(2, 'Slug обязателен'),
 });

@@ -5,9 +5,9 @@ import { useModalActions, useEditItem } from '@/app/stores/modalStore';
 import { IoMdClose } from 'react-icons/io';
 import { z } from 'zod';
 import {
-    productSchema,
+    phoneSchema,
     userSchema,
-    categorySchema,
+    brandSchema,
     orderSchema,
 } from '@/lib/validation';
 export default function AdminModal() {
@@ -45,9 +45,9 @@ export default function AdminModal() {
             payload.images = payload.images.split(',').map((s) => s.trim());
         }
         try {
-            if (currentEntity === 'products') productSchema.parse(payload);
+            if (currentEntity === 'phones') phoneSchema.parse(payload);
             if (currentEntity === 'users') userSchema.parse(payload);
-            if (currentEntity === 'categories') categorySchema.parse(payload);
+            if (currentEntity === 'brands') brandSchema.parse(payload);
             if (currentEntity === 'orders') orderSchema.parse(payload);
         } catch (err) {
             if (err instanceof z.ZodError) {
@@ -66,7 +66,7 @@ export default function AdminModal() {
 
     const getFields = (): string[] => {
         switch (currentEntity) {
-            case 'products':
+            case 'phones':
                 return [
                     'name',
                     'slug',
@@ -77,10 +77,10 @@ export default function AdminModal() {
                     'color',
                     'images',
                     'specs',
-                    'categoryId',
+                    'brandId',
                     'description',
                 ];
-            case 'categories':
+            case 'brands':
                 return ['name', 'slug'];
             default:
                 return ['name', 'email', 'role'];

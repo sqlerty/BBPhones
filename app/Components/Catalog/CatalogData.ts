@@ -9,7 +9,7 @@ interface FiltItem {
 }
 
 export const SortItems: SortItem[] = [
-    { title: 'Сначала популярные', value: 'popular' },
+    { title: 'Сначала новые', value: 'new' },
     { title: 'Сначала дешевые', value: 'asc' },
     { title: 'Сначала дорогие', value: 'desc' },
     { title: 'По рейтингу', value: 'rate' },
@@ -20,4 +20,10 @@ export const FilterItems: FiltItem[] = [
     { title: 'Флагманы', value: 'flagman' },
     { title: 'Средний сегмент', value: 'middle' },
     { title: 'Бюджетные', value: 'budget' },
+];
+
+export const conditionItems = [
+    { title: 'Все', value: '' },
+    { title: 'Новые', value: 'new' },
+    { title: 'Б/У', value: 'used' },
 ];

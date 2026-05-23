@@ -4,7 +4,7 @@ import Image from 'next/image';
 import {
     useCatalogActions,
     useIsFilter,
-    ProductWithCategory,
+    PhonesWithBrand,
 } from '@/app/stores/catalogStore';
 import {
     useFavoritePhonesId,
@@ -15,7 +15,7 @@ import { LuHeart } from 'react-icons/lu';
 import Link from 'next/link';
 
 interface IPhoneCard {
-    phone: ProductWithCategory;
+    phone: PhonesWithBrand;
 }
 export default function PhoneCard({ phone }: IPhoneCard) {
     const { addToCart } = useCartActions();
@@ -56,7 +56,7 @@ export default function PhoneCard({ phone }: IPhoneCard) {
             <div className="flex flex-col gap-3 bg-white p-5">
                 <div className="flex flex-col gap-2 border-b border-b-gray-100 pb-4">
                     <p className="text-sm text-blue-600 uppercase">
-                        {phone.category.name}
+                        {phone.brand.name}
                     </p>
                     <Link
                         href={`/Phone/${phone.slug}`}

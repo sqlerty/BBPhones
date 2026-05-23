@@ -66,9 +66,7 @@ export default function Stats() {
                         <div className="mb-1 font-bold">
                             {item.r ? `${item.value} ₽` : item.value}{' '}
                         </div>
-                        <div className="text-sm text-gray-500">
-                            Общая выручка
-                        </div>
+                        <div className="text-sm text-gray-500">{item.name}</div>
                     </div>
                 ))}
             </div>

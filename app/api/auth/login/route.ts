@@ -9,12 +9,18 @@ export async function POST(req: Request) {
 
         const user = await prisma.users.findUnique({ where: { email } });
         if (!user) {
-            return NextResponse.json({ error: 'Неверный email или пароль' }, { status: 401 });
+            return NextResponse.json(
+                { error: 'Неверный email или пароль' },
+                { status: 401 }
+            );
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return NextResponse.json({ error: 'Неверный email или пароль' }, { status: 401 });
+            return NextResponse.json(
+                { error: 'Неверный email или пароль' },
+                { status: 401 }
+            );
         }
         const token = jwt.sign(
             { userId: user.id, email: user.email, role: user.role },
@@ -23,7 +29,13 @@ export async function POST(req: Request) {
         );
         const response = NextResponse.json({
             message: 'Вход выполнен',
-            user: { id: user.id, email: user.email, name: user.name, role: user.role }
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                avatarUrl: user.avatarUrl,
+            },
         });
         response.cookies.set('auth_token', token, {
             httpOnly: true,

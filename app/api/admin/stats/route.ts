@@ -24,14 +24,14 @@ export async function GET() {
         const totalOrders = orders.length;
         const avgCheck = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-        const productsCount = await prisma.products.count();
+        const productsCount = await prisma.phones.count();
 
         const paidOrders = await prisma.orders.findMany({
             include: {
                 orderItems: {
                     include: {
-                        product: {
-                            include: { category: true },
+                        phone: {
+                            include: { brand: true },
                         },
                     },
                 },
@@ -41,7 +41,7 @@ export async function GET() {
 
         paidOrders.forEach((order) => {
             order.orderItems.forEach((item) => {
-                const brandName = item.product.category.name;
+                const brandName = item.phone.brand.name;
                 const totalPositionPrice = Number(item.price) * item.quantity;
 
                 if (!brandMap[brandName]) brandMap[brandName] = 0;
@@ -57,11 +57,11 @@ export async function GET() {
             .sort((a, b) => b.sales - a.sales);
 
         const [budgetCount, middleCount, flagshipCount] = await Promise.all([
-            prisma.products.count({ where: { price: { lt: 20000 } } }),
-            prisma.products.count({
+            prisma.phones.count({ where: { price: { lt: 20000 } } }),
+            prisma.phones.count({
                 where: { price: { gte: 20000, lt: 40000 } },
             }),
-            prisma.products.count({ where: { price: { gte: 40000 } } }),
+            prisma.phones.count({ where: { price: { gte: 40000 } } }),
         ]);
 
         const distributionBySegments = [
@@ -71,7 +71,7 @@ export async function GET() {
         ];
 
         const topProducts = await prisma.orderItems.groupBy({
-            by: ['productId'],
+            by: ['phoneId'],
             _sum: {
                 quantity: true,
             },
@@ -84,13 +84,13 @@ export async function GET() {
         });
         const topSellingModels = await Promise.all(
             topProducts.map(async (item) => {
-                const product = await prisma.products.findUnique({
-                    where: { id: item.productId },
+                const phone = await prisma.phones.findUnique({
+                    where: { id: item.phoneId },
                     select: { name: true },
                 });
                 return {
                     name:
-                        product?.name.split(' ').slice(0, 3).join(' ') ||
+                        phone?.name.split(' ').slice(0, 3).join(' ') ||
                         'Unknown',
                     value: item._sum.quantity || 0,
                 };

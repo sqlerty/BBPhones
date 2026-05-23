@@ -1,6 +1,6 @@
 export const managementData = [
-    { name: 'Товары', entity: 'products' },
+    { name: 'Телефоны', entity: 'phones' },
     { name: 'Пользователи', entity: 'users' },
-    { name: 'Категории', entity: 'categories' },
+    { name: 'Бренды', entity: 'brands' },
     { name: 'Заказы', entity: 'orders' },
 ];

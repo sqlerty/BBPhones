@@ -72,8 +72,8 @@ export default function UserOrders() {
                                     >
                                         <div className="h-20 w-20 shrink-0 rounded-xl bg-gray-50 p-2">
                                             <Image
-                                                src={item.product.images[0]}
-                                                alt={item.product.name}
+                                                src={item.phone.images[0]}
+                                                alt={item.phone.name}
                                                 height={600}
                                                 width={600}
                                                 className="h-full w-full object-contain mix-blend-multiply transition-transform group-hover:scale-110"
@@ -81,11 +81,11 @@ export default function UserOrders() {
                                         </div>
                                         <div className="flex flex-1 flex-col justify-center">
                                             <div className="mb-1 text-xs font-bold text-blue-600 uppercase">
-                                                {item.product.category?.name ||
+                                                {item.phone.brand?.name ||
                                                     'Смартфон'}
                                             </div>
                                             <div className="font-bold text-gray-900 transition-colors group-hover:text-blue-600">
-                                                {item.product.name}
+                                                {item.phone.name}
                                             </div>
                                             <div className="mt-1 text-sm text-gray-500">
                                                 {item.quantity} шт. ×{' '}

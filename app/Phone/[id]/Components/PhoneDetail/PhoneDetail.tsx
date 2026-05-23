@@ -5,11 +5,11 @@ import PhoneSpecs from './PhoneSpecs/PhoneSpecs';
 import BBPluses from './BBPluses/BBPluses';
 import TotalCost from './TotalCost/TotalCost';
 import Link from 'next/link';
-import { ProductWithCategory } from '@/app/stores/catalogStore';
+import { PhonesWithBrand } from '@/app/stores/catalogStore';
 import { useState } from 'react';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 interface IDetail {
-    phone: ProductWithCategory | null;
+    phone: PhonesWithBrand | null;
 }
 
 export default function PhoneDetail({ phone }: IDetail) {
@@ -44,6 +44,7 @@ export default function PhoneDetail({ phone }: IDetail) {
                             src={phone?.images[currentIndex] || ''}
                             alt="Product image"
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             priority
                             className="object-contain p-8 transition-transform duration-500 ease-in-out group-hover:scale-105"
                         />
@@ -89,6 +90,7 @@ export default function PhoneDetail({ phone }: IDetail) {
                                     <Image
                                         src={img}
                                         alt={`Thumb ${index}`}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         fill
                                         className="object-contain p-2"
                                     />
@@ -100,7 +102,7 @@ export default function PhoneDetail({ phone }: IDetail) {
                 <div className="flex w-1/2 flex-col gap-7 bg-white p-10 max-md:w-full">
                     <div>
                         <p className="mb-2 text-sm font-bold text-blue-600 uppercase">
-                            {phone?.category.name}
+                            {phone?.brand.name}
                         </p>
                         <h3 className="text-3xl leading-tight font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
                             {phone?.name}
@@ -110,6 +112,23 @@ export default function PhoneDetail({ phone }: IDetail) {
                     <p className="text-lg leading-relaxed text-gray-600">
                         {phone?.description}
                     </p>
+                    {phone?.condition === 'USED' && (
+                        <div className="mb-10 flex items-start gap-4 rounded-2xl border border-purple-100 bg-purple-50 p-5">
+                            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100">
+                                <span className="text-sm font-bold text-purple-600">
+                                    Б/У
+                                </span>
+                            </div>
+                            <div>
+                                <h4 className="mb-1 font-bold text-purple-900">
+                                    Оценка состояния
+                                </h4>
+                                <p className="text-sm leading-relaxed text-purple-800/80">
+                                    {phone?.defectDetails}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <PhoneSpecs phone={phone} />
                     <div className="rounded-2xl border border-gray-100 bg-gray-50/80 p-6">
                         <div className="mb-4 flex items-center justify-between">

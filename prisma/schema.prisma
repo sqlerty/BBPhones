@@ -18,7 +18,10 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
-
+enum PhoneCondition {
+  NEW          
+  USED   
+}
 model Users {
   id         String     @id @default(uuid()) @db.Uuid
   email      String     @unique
@@ -35,18 +38,18 @@ model Users {
   @@map("users")
 }
 
-model Categories {
+model Brands {
   id        String    @id @default(uuid()) @db.Uuid
   name      String    @unique
   slug      String    @unique
   createdAt DateTime  @default(now()) @map("created_at")
   
-  products  Products[]
+  phones  Phones[]
 
-  @@map("categories")
+  @@map("brands")
 }
 
-model Products {
+model Phones {
   id          String   @id @default(uuid()) @db.Uuid
   name        String
   slug        String   @unique
@@ -57,10 +60,12 @@ model Products {
   ram         Int
   storage     Int
   color       String
-  specs       Json?    
+  specs       Json? 
+  condition       PhoneCondition @default(NEW)
+  defectDetails   String?   
   createdAt   DateTime @default(now()) @map("created_at")
-  categoryId  String   @db.Uuid @map("category_id")
-  category    Categories @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  brandId  String   @db.Uuid @map("brand_id")
+  brand    Brands @relation(fields: [brandId], references: [id], onDelete: Restrict)
   averageRating Float    @default(0)
   reviewCount   Int      @default(0)
   orderItems  OrderItems[]
@@ -68,7 +73,7 @@ model Products {
   reviews     Reviews[]
   cart        Cart[]
 
-  @@map("products")
+  @@map("phones")
 }
 
 model Orders {
@@ -89,8 +94,8 @@ model OrderItems {
   id        String  @id @default(uuid()) @db.Uuid
   orderId   String  @db.Uuid @map("order_id")
   order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String  @db.Uuid @map("product_id")
-  product   Products @relation(fields: [productId], references: [id], onDelete: Restrict)
+  phoneId String  @db.Uuid @map("phone_id")
+  phone Phones @relation(fields: [phoneId], references: [id], onDelete: Restrict)
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
 
@@ -101,11 +106,11 @@ model Favorites {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid @map("user_id")
   user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId String   @db.Uuid @map("product_id")
-  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  phoneId String   @db.Uuid @map("phone_id")
+  phone   Phones  @relation(fields: [phoneId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([userId, productId])
+  @@unique([userId, phoneId])
   @@map("favorites")
 }
 
@@ -113,8 +118,8 @@ model Reviews {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid @map("user_id")
   user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId String   @db.Uuid @map("product_id")
-  product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  phoneId String   @db.Uuid @map("phone_id")
+  phone   Phones  @relation(fields: [phoneId], references: [id], onDelete: Cascade)
   rating    Int      
   comment   String?
   createdAt DateTime @default(now()) @map("created_at")
@@ -126,10 +131,10 @@ model Cart {
   id        String  @id @default(uuid()) @db.Uuid
   userId    String  @db.Uuid @map("user_id")
   user      Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId String  @db.Uuid @map("product_id")
-  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  phoneId String   @db.Uuid @map("phone_id")
+  phone   Phones  @relation(fields: [phoneId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)
 
-  @@unique([userId, productId])
+  @@unique([userId, phoneId])
   @@map("cart")
 }

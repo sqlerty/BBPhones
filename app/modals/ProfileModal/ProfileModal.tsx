@@ -42,10 +42,7 @@ export default function ProfileModal() {
                 <div className="flex flex-col items-center gap-4">
                     <div className="relative h-24 w-24">
                         <Image
-                            src={
-                                preview ||
-                                'https://www.magnific.com/free-vector/illustration-businessman_2606517.htm#fromView=keyword&page=1&position=6&uuid=1b19769d-cce1-4266-bbb0-bd446b4ed875&query=Default+avatar'
-                            }
+                            src={preview || '/img/default-avatar.jpg'}
                             alt="profile"
                             width={600}
                             height={600}

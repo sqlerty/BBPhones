@@ -15,9 +15,9 @@ export async function GET() {
             include: {
                 orderItems: {
                     include: {
-                        product: {
+                        phone: {
                             include: {
-                                category: true,
+                                brand: true,
                             },
                         },
                     },

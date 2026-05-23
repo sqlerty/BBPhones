@@ -22,7 +22,7 @@ const modalStore: StateCreator<IModal> = (set) => ({
     },
 });
 
-const useModalStore = create<IModal>()(modalStore);
+export const useModalStore = create<IModal>()(modalStore);
 
 export const useActiveModal = () => useModalStore((state) => state.activeModal);
 export const useEditItem = () => useModalStore((state) => state.editItem);

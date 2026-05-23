@@ -15,7 +15,7 @@ export default function PhotoPhone() {
             <Image
                 src="/img/phone.jfif"
                 alt="Latest Smartphones"
-                className="w-full -rotate-2 rounded-3xl object-cover shadow-2xl transition-transform duration-500 hover:rotate-0"
+                className="h-auto w-full -rotate-2 rounded-3xl object-cover shadow-2xl transition-transform duration-500 hover:rotate-0"
                 width={400}
                 height={600}
             />

@@ -23,10 +23,7 @@ export default function MainInfo() {
         <div className="flex w-md flex-col gap-5 rounded-2xl bg-white p-10 max-md:w-full">
             <div className="flex h-24 w-24 items-center justify-center self-center rounded-full border-4 border-white bg-white shadow-xl shadow-blue-900/5">
                 <Image
-                    src={
-                        user?.avatarUrl ||
-                        'https://www.magnific.com/free-vector/illustration-businessman_2606517.htm#fromView=keyword&page=1&position=6&uuid=1b19769d-cce1-4266-bbb0-bd446b4ed875&query=Default+avatar'
-                    }
+                    src={user?.avatarUrl || '/img/default-avatar.jpg'}
                     alt="profile"
                     width={600}
                     height={600}

@@ -1,7 +1,7 @@
 import { IoCartOutline } from 'react-icons/io5';
 import { FiHome } from 'react-icons/fi';
 import { MdOutlinePersonOutline } from 'react-icons/md';
-import { LuShield } from 'react-icons/lu';
+import { LuShield, LuInfo } from 'react-icons/lu';
 
 export const navLinks = [
     { to: '/', icon: FiHome, label: 'Главная', requariesAuth: false },
@@ -18,5 +18,18 @@ export const navLinks = [
         label: 'Админ-Панель',
         requariesAuth: true,
         adminOnly: true,
+    },
+    {
+        to: '/Authorization',
+        icon: MdOutlinePersonOutline,
+        label: 'Войти',
+        requariesAuth: false,
+        startLink: true,
+    },
+    {
+        to: '/Information',
+        icon: LuInfo,
+        label: 'О магазине',
+        requariesAuth: false,
     },
 ];

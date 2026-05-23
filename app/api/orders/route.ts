@@ -13,10 +13,10 @@ export async function POST(req: Request) {
         const order = await prisma.$transaction(async (tx) => {
             const cartItems = await tx.cart.findMany({
                 where: { userId },
-                include: { product: true },
+                include: { phone: true },
             });
             const totalAmount = cartItems.reduce(
-                (sum, item) => sum + Number(item.product.price) * item.quantity,
+                (sum, item) => sum + Number(item.phone.price) * item.quantity,
                 0
             );
 
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
                     status: 'PENDING',
                     orderItems: {
                         create: cartItems.map((item) => ({
-                            productId: item.productId,
+                            phoneId: item.phoneId,
                             quantity: item.quantity,
-                            price: item.product.price,
+                            price: item.phone.price,
                         })),
                     },
                 },

@@ -3,7 +3,7 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { isEmail } from 'validator';
 import axios, { AxiosError } from 'axios';
-import { ProductWithCategory } from './catalogStore';
+import { PhonesWithBrand } from './catalogStore';
 
 interface IUser {
     id: string;
@@ -37,7 +37,7 @@ interface IProfile {
 }
 
 export interface IFavorite {
-    product_id: string;
+    phone_id: string;
 }
 interface ApiError {
     error: string;
@@ -47,13 +47,13 @@ export interface IOrder {
     total_price: number;
     status: string;
     created_at: string;
-    items?: ProductWithCategory[];
+    items?: PhonesWithBrand[];
 }
 
 export interface IFavoriteSlice {
     favoritePhonesId: string[];
-    favoritePhones: ProductWithCategory[];
-    toggleFavorite: (phone: ProductWithCategory) => Promise<void>;
+    favoritePhones: PhonesWithBrand[];
+    toggleFavorite: (phone: PhonesWithBrand) => Promise<void>;
     fetchFavorites: () => Promise<void>;
     activeTab: string;
     setActiveTab: (word: string) => void;
@@ -65,7 +65,7 @@ export interface ICartItem {
     price: number;
     image: string;
     quantity: number;
-    category?: string;
+    brand?: string;
     ram: number;
     storage: number;
 }
@@ -75,9 +75,9 @@ export interface ICart {
     cartTotalQuantity: number;
     isCartLoading: boolean;
     fetchCart: () => Promise<void>;
-    addToCart: (phone: ProductWithCategory) => Promise<void>;
-    removeFromCart: (productId: string) => Promise<void>;
-    updateQuantity: (productId: string, delta: number) => Promise<void>;
+    addToCart: (phone: PhonesWithBrand) => Promise<void>;
+    removeFromCart: (phoneId: string) => Promise<void>;
+    updateQuantity: (phoneId: string, delta: number) => Promise<void>;
     clearCart: () => Promise<void>;
     createOrder: (addres: string, phone: string) => Promise<void>;
 }
@@ -91,7 +91,7 @@ export interface IOrder {
         id: string;
         quantity: number;
         price: number;
-        product: ProductWithCategory;
+        phone: PhonesWithBrand;
     }[];
 }
 
@@ -225,10 +225,10 @@ const FavoriteSlice: StateCreator<
     fetchFavorites: async () => {
         try {
             const { data } = await axios.get('/api/favorites');
-            const products = data as ProductWithCategory[];
+            const phones = data as PhonesWithBrand[];
             set({
-                favoritePhones: products,
-                favoritePhonesId: products.map((p) => p.id),
+                favoritePhones: phones,
+                favoritePhonesId: phones.map((p) => p.id),
             });
         } catch {
             console.error('Ошибка загрузки избранного');
@@ -247,7 +247,7 @@ const FavoriteSlice: StateCreator<
             : [...favoritePhones, phone];
         set({ favoritePhonesId: nextIds, favoritePhones: nextPhones });
         try {
-            await axios.post('/api/favorites', { productId: phone.id });
+            await axios.post('/api/favorites', { phoneId: phone.id });
         } catch {
             set({ favoritePhonesId, favoritePhones });
             alert('Ошибка при сохранении');
@@ -281,6 +281,7 @@ const CartSlice: StateCreator<
 
     addToCart: async (phone) => {
         const { cart, isAuth } = get();
+        if (!isAuth) return alert('Войдите в аккаунт');
         const existing = cart.find((i) => i.id === phone.id);
 
         const newCart = existing
@@ -306,7 +307,7 @@ const CartSlice: StateCreator<
             try {
                 const nextQty = existing ? existing.quantity + 1 : 1;
                 await axios.post('/api/cart', {
-                    productId: phone.id,
+                    phoneId: phone.id,
                     quantity: nextQty,
                 });
             } catch {
@@ -330,7 +331,7 @@ const CartSlice: StateCreator<
         if (isAuth) {
             try {
                 await axios.post('/api/cart', {
-                    productId: id,
+                    phoneId: id,
                     quantity: newQty,
                 });
             } catch {
@@ -401,7 +402,7 @@ const OrderSlice: StateCreator<
     },
 });
 
-const useProfileStore = create<IProfileStore>()(
+export const useProfileStore = create<IProfileStore>()(
     devtools(
         persist(
             (...a) => ({

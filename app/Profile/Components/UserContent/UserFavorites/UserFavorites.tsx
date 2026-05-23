@@ -30,7 +30,7 @@ export default function UserFavorites() {
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="mb-1 text-xs font-bold text-blue-600 uppercase">
-                            {phone.category.name}
+                            {phone.brand.name}
                         </div>
                         <div className="mb-2 truncate font-bold text-gray-900 transition-colors group-hover:text-blue-600">
                             {phone.name}

@@ -1,6 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
-import { FilterItems } from '../CatalogData';
+import { FilterItems, conditionItems } from '../CatalogData';
 import {
     usePhones,
     useSelectedBrands,
@@ -8,19 +8,21 @@ import {
     usePriceRange,
     useClearFilters,
     useCatalogActions,
+    useCondition,
 } from '@/app/stores/catalogStore';
 
 export default function Filters() {
     const phones = usePhones();
-    const brands = Array.from(
-        new Set(phones.map((p) => p.category.name))
-    ).filter(Boolean);
-
+    const brands = Array.from(new Set(phones.map((p) => p.brand.name))).filter(
+        Boolean
+    );
+    const selectedCondition = useCondition();
     const selectedCategory = useSelectedCategory();
     const selectedBrands = useSelectedBrands();
     const priceRange = usePriceRange();
     const clearFilters = useClearFilters();
-    const { setCategory, setBrands, setPriceRange } = useCatalogActions();
+    const { setCategory, setBrands, setPriceRange, setCondition } =
+        useCatalogActions();
     return (
         <AnimatePresence>
             <motion.aside
@@ -40,6 +42,25 @@ export default function Filters() {
                                 Сбросить
                             </button>
                         </div>
+                        <div className="mb-5 pb-5">
+                            <h4 className="mb-4 font-semibold">Категории</h4>
+                            <div className="flex gap-3">
+                                {conditionItems.map((item) => (
+                                    <button
+                                        key={item.value}
+                                        onClick={() => setCondition(item.value)}
+                                        className={`rounded-xl px-4 py-2 text-center text-sm font-medium transition-all ${
+                                            selectedCondition === item.value
+                                                ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-sm'
+                                                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        {item.title}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         <div>
                             <h4 className="mb-4 font-semibold">Категории</h4>
                             <div className="flex flex-col gap-2">

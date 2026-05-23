@@ -2,32 +2,34 @@ import { create, StateCreator } from 'zustand';
 import axios from 'axios';
 
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { Products, Categories } from '@prisma/client';
+import { Phones, Brands } from '@prisma/client';
 import { ProductSpecs } from '@/types/database';
 
-export type ProductWithCategory = Omit<Products, 'specs'> & {
-    category: Categories;
+export type PhonesWithBrand = Omit<Phones, 'specs'> & {
+    brand: Brands;
     specs: ProductSpecs;
 };
 
 interface ICatalogStore {
-    phones: ProductWithCategory[];
+    phones: PhonesWithBrand[];
     loading: boolean;
     fetchPhones: () => Promise<void>;
     searchWord: string;
-    searchedPhones: ProductWithCategory[];
+    searchedPhones: PhonesWithBrand[];
     setSearch: (word: string) => void;
-    infoPhone: ProductWithCategory | null;
-    setInfoPhone: (phone: ProductWithCategory) => void;
+    infoPhone: PhonesWithBrand | null;
+    setInfoPhone: (phone: PhonesWithBrand) => void;
 }
 
 interface IFilter {
-    filterPhones: ProductWithCategory[];
+    filterPhones: PhonesWithBrand[];
+    condition: string;
     isFilter: boolean;
     categoryFilter: string;
     brandFilter: string[];
     priceRange: [number, number];
     sort: string;
+    setCondition: (word: string) => void;
     setSort: (word: string) => void;
     setBrands: (brand: string) => void;
     setCategory: (category: string) => void;
@@ -53,8 +55,7 @@ const CatalogStoreSlice: StateCreator<
 
     fetchPhones: async () => {
         try {
-            const response =
-                await axios.get<ProductWithCategory[]>('api/phones');
+            const response = await axios.get<PhonesWithBrand[]>('api/phones');
 
             set({ phones: response.data, filterPhones: response.data });
         } catch (err) {
@@ -96,12 +97,18 @@ const FilterSlice: StateCreator<
     [],
     IFilter
 > = (set, get) => ({
+    condition: '',
     isFilter: false,
     filterPhones: [],
     categoryFilter: 'all',
     brandFilter: [],
     priceRange: [0, 150000],
+
     sort: '',
+    setCondition: (word) => {
+        set({ condition: word });
+        get().setFilterPhones();
+    },
     setFilter: () => {
         set({ isFilter: !get().isFilter });
     },
@@ -126,7 +133,14 @@ const FilterSlice: StateCreator<
         get().setFilterPhones();
     },
     setFilterPhones: () => {
-        const { categoryFilter, brandFilter, priceRange, phones, sort } = get();
+        const {
+            categoryFilter,
+            brandFilter,
+            priceRange,
+            phones,
+            sort,
+            condition,
+        } = get();
         set({ filterPhones: phones });
         let result = [...phones];
 
@@ -142,15 +156,30 @@ const FilterSlice: StateCreator<
         }
         if (brandFilter.length > 0) {
             result = result.filter((phone) =>
-                brandFilter.includes(phone.category.name ?? '')
+                brandFilter.includes(phone.brand.name ?? '')
             );
         }
-
+        if (condition) {
+            switch (condition) {
+                case 'new':
+                    result = result.filter((res) => res.condition == 'NEW');
+                    break;
+                case 'used':
+                    result = result.filter((res) => res.condition == 'USED');
+                    break;
+            }
+        }
         result = result.filter((phone) => {
             const price = Number(phone.price);
             return price >= priceRange[0] && price <= priceRange[1];
         });
+
         switch (sort) {
+            case 'new':
+                result = [...result].sort(
+                    (a, b) => Number(a.createdAt) - Number(b.createdAt)
+                );
+                break;
             case 'asc':
                 result = [...result].sort(
                     (a, b) => Number(a.price) - Number(b.price)
@@ -194,6 +223,7 @@ export const usePhoneStore = create<IBBPStore>()(
                     phones: state.phones,
                     filterPhones: state.filterPhones,
                     infoPhone: state.infoPhone,
+                    isFilter: state.isFilter,
                 }),
             }
         )
@@ -216,6 +246,7 @@ export const useIsFilter = () => usePhoneStore((state) => state.isFilter);
 export const useFilterPhones = () =>
     usePhoneStore((state) => state.filterPhones);
 
+export const useCondition = () => usePhoneStore((state) => state.condition);
 export const useSelectedCategory = () =>
     usePhoneStore((state) => state.categoryFilter);
 export const useSelectedBrands = () =>
@@ -237,6 +268,7 @@ export const useCatalogActions = () => {
         setSort,
         setPriceRange,
         clearFilters,
+        setCondition,
     } = usePhoneStore.getState();
     return {
         fetchPhones,
@@ -248,5 +280,6 @@ export const useCatalogActions = () => {
         setSort,
         setPriceRange,
         clearFilters,
+        setCondition,
     };
 };

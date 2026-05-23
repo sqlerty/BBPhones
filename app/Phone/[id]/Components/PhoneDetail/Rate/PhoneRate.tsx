@@ -17,7 +17,7 @@ export default function PhoneRate({ phone }: ISpecs) {
             </a>
             <span className="hidden text-gray-300 sm:inline">•</span>
             <span className="text-sm font-medium text-gray-500">
-                Артикул: SM-{phone?.categoryId.slice(15)}
+                Артикул: SM-{phone?.brandId.slice(15)}
             </span>
         </div>
     );

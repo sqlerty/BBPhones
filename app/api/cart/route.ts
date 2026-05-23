@@ -5,20 +5,26 @@ import { getUserIdFromToken } from '@/lib/auth';
 export async function GET() {
     try {
         const userId = await getUserIdFromToken();
-        if (!userId) return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+        if (!userId)
+            return NextResponse.json(
+                { error: 'Не авторизован' },
+                { status: 401 }
+            );
 
-        const cartItems = await prisma.cart.findMany({where: { userId },include: {product: {include: { category: true }}},
-            orderBy: { id: 'asc' }
+        const cartItems = await prisma.cart.findMany({
+            where: { userId },
+            include: { phone: { include: { brand: true } } },
+            orderBy: { id: 'asc' },
         });
 
-        const formattedCart = cartItems.map(item => ({
-            id: item.product.id,
-            name: item.product.name,
-            price: Number(item.product.price),
-            image: item.product.images[0],
-            ram: item.product.ram,
-            storage: item.product.storage,
-            quantity: item.quantity
+        const formattedCart = cartItems.map((item) => ({
+            id: item.phone.id,
+            name: item.phone.name,
+            price: Number(item.phone.price),
+            image: item.phone.images[0],
+            ram: item.phone.ram,
+            storage: item.phone.storage,
+            quantity: item.quantity,
         }));
 
         return NextResponse.json(formattedCart);
@@ -30,44 +36,60 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const userId = await getUserIdFromToken();
-        if (!userId) return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+        if (!userId)
+            return NextResponse.json(
+                { error: 'Не авторизован' },
+                { status: 401 }
+            );
 
-        const { productId, quantity } = await req.json();
+        const { phoneId, quantity } = await req.json();
 
-        const cartItem = await prisma.cart.upsert({where: {userId_productId: { userId, productId }},update: {quantity: quantity},
+        const cartItem = await prisma.cart.upsert({
+            where: { userId_phoneId: { userId, phoneId } },
+            update: { quantity: quantity },
             create: {
                 userId,
-                productId,
-                quantity: 1
-            }
+                phoneId,
+                quantity: 1,
+            },
         });
 
         return NextResponse.json(cartItem);
     } catch {
-        return NextResponse.json({ error: 'Ошибка при сохранении в корзину' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Ошибка при сохранении в корзину' },
+            { status: 500 }
+        );
     }
 }
 export async function DELETE(req: Request) {
     try {
         const userId = await getUserIdFromToken();
-        if (!userId) return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+        if (!userId)
+            return NextResponse.json(
+                { error: 'Не авторизован' },
+                { status: 401 }
+            );
 
         const { searchParams } = new URL(req.url);
-        const productId = searchParams.get('productId');
+        const phoneId = searchParams.get('phoneId');
 
-        if (!productId) {
+        if (!phoneId) {
             await prisma.cart.deleteMany({ where: { userId } });
             return NextResponse.json({ message: 'Корзина очищена' });
         }
 
         await prisma.cart.delete({
             where: {
-                userId_productId: { userId, productId }
-            }
+                userId_phoneId: { userId, phoneId },
+            },
         });
 
         return NextResponse.json({ message: 'Товар удален' });
     } catch {
-        return NextResponse.json({ error: 'Ошибка при удалении' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Ошибка при удалении' },
+            { status: 500 }
+        );
     }
 }

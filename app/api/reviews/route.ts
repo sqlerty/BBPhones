@@ -5,16 +5,16 @@ import { getUserIdFromToken } from '@/lib/auth';
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
-        const productId = searchParams.get('productId');
+        const phoneId = searchParams.get('phoneId');
 
-        if (!productId)
+        if (!phoneId)
             return NextResponse.json(
                 { error: 'ID товара не указан' },
                 { status: 400 }
             );
 
         const reviews = await prisma.reviews.findMany({
-            where: { productId },
+            where: { phoneId },
             include: {
                 user: { select: { name: true, email: true, avatarUrl: true } },
             },
@@ -38,8 +38,8 @@ export async function POST(req: Request) {
                 { error: 'Не авторизован' },
                 { status: 401 }
             );
-        const { productId, rating, comment } = await req.json();
-        if (!productId || !rating)
+        const { phoneId, rating, comment } = await req.json();
+        if (!phoneId || !rating)
             return NextResponse.json(
                 { error: 'Данные не полные' },
                 { status: 400 }
@@ -50,11 +50,11 @@ export async function POST(req: Request) {
                 { status: 400 }
             );
         const existingReview = await prisma.reviews.findFirst({
-            where: { userId, productId },
+            where: { userId, phoneId },
         });
         if (existingReview) {
             return NextResponse.json(
-                { error: 'Вы уже оставили отзыв на этот товар' },
+                { error: 'Вы уже оставили отзыв на этот телефон' },
                 { status: 400 }
             );
         }
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
             const newReview = await tx.reviews.create({
                 data: {
                     userId,
-                    productId,
+                    phoneId,
                     rating: Number(rating),
                     comment,
                 },
@@ -78,13 +78,13 @@ export async function POST(req: Request) {
             });
 
             const stats = await tx.reviews.aggregate({
-                where: { productId },
+                where: { phoneId },
                 _avg: { rating: true },
                 _count: { id: true },
             });
 
-            const updatedProduct = await tx.products.update({
-                where: { id: productId },
+            const updatedPhone = await tx.phones.update({
+                where: { id: phoneId },
                 data: {
                     averageRating: stats._avg.rating
                         ? Math.round(stats._avg.rating * 10) / 10
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
                 },
             });
 
-            return { newReview, updatedProduct };
+            return { newReview, updatedPhone };
         });
 
         return NextResponse.json(result.newReview);
