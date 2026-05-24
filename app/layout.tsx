@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'BBPhones',
-    description: 'Лучший магазин смартфонов!',
+    title: 'BBPhones | Магазин новых и б/у смартфонов ',
+    description:
+        'Технологии будущего в твоих руках! Широкий выбор новых и проверенных б/у смартфонов с гарантией качества. Быстрая доставка до двери и честные цены.',
 };
 
 export default function RootLayout({

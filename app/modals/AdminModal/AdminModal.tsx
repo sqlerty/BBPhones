@@ -9,6 +9,7 @@ import {
     userSchema,
     brandSchema,
     orderSchema,
+    reviewSchema,
 } from '@/lib/validation';
 export default function AdminModal() {
     const currentEntity = useEntity();
@@ -22,7 +23,7 @@ export default function AdminModal() {
     const handleChange = (key: string, value: string) => {
         let parsedValue: unknown = value;
         if (
-            ['price', 'stock', 'ram', 'storage'].includes(key) &&
+            ['price', 'stock', 'ram', 'storage', 'rating'].includes(key) &&
             value !== ''
         ) {
             parsedValue = Number(value);
@@ -49,6 +50,7 @@ export default function AdminModal() {
             if (currentEntity === 'users') userSchema.parse(payload);
             if (currentEntity === 'brands') brandSchema.parse(payload);
             if (currentEntity === 'orders') orderSchema.parse(payload);
+            if (currentEntity === 'reviews') reviewSchema.parse(payload);
         } catch (err) {
             if (err instanceof z.ZodError) {
                 alert(err.issues[0].message);
@@ -82,6 +84,9 @@ export default function AdminModal() {
                 ];
             case 'brands':
                 return ['name', 'slug'];
+
+            case 'reviews':
+                return ['rating', 'comment'];
             default:
                 return ['name', 'email', 'role'];
         }

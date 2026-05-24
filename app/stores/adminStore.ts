@@ -1,10 +1,10 @@
 import { create, StateCreator } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
-import { Phones, Brands, Users, Orders } from '@prisma/client';
+import { Phones, Brands, Users, Orders, Reviews } from '@prisma/client';
 import axios from 'axios';
 
-type EntityData = Phones | Brands | Users | Orders;
+type EntityData = Phones | Brands | Users | Orders | Reviews;
 
 interface IAdmin {
     adminTab: string;

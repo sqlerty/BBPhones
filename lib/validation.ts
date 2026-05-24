@@ -27,3 +27,12 @@ export const orderSchema = z.object({
     total: z.number().min(0, 'Сумма не может быть отрицательной'),
     status: z.string().min(1, 'Статус обязателен'),
 });
+
+export const reviewSchema = z.object({
+    rating: z
+        .number()
+        .int()
+        .min(1, 'Оценка должна быть от 1 до 5')
+        .max(5, 'Оценка должна быть от 1 до 5'),
+    comment: z.string().min(1, 'Комментарий не может быть пустым'),
+});

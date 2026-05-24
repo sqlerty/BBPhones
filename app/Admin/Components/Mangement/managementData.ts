@@ -3,4 +3,5 @@ export const managementData = [
     { name: 'Пользователи', entity: 'users' },
     { name: 'Бренды', entity: 'brands' },
     { name: 'Заказы', entity: 'orders' },
+    { name: 'Отзывы', entity: 'reviews' },
 ];
