@@ -1,9 +1,9 @@
 import { LuShoppingCart } from 'react-icons/lu';
 
-import { ProductWithCategory } from '@/app/stores/catalogStore';
+import { PhonesWithBrand } from '@/app/stores/catalogStore';
 import { useCartActions } from '@/app/stores/profileStore';
 interface ITotalCost {
-    phone: ProductWithCategory | null;
+    phone: PhonesWithBrand | null;
 }
 
 export default function TotalCost({ phone }: ITotalCost) {

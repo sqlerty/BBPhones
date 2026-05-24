@@ -29,7 +29,7 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
                                 className="group"
                             >
                                 <p className="text-xs font-bold text-blue-600 uppercase">
-                                    {cartPhone.category}
+                                    {cartPhone.brand}
                                 </p>
                                 <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
                                     {cartPhone.name}

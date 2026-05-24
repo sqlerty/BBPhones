@@ -1,7 +1,7 @@
 import { LuMonitor, LuCpu, LuCamera, LuBattery } from 'react-icons/lu';
-import { ProductWithCategory } from '@/app/stores/catalogStore';
+import { PhonesWithBrand } from '@/app/stores/catalogStore';
 export interface ISpecs {
-    phone: ProductWithCategory | null;
+    phone: PhonesWithBrand | null;
 }
 
 export default function PhoneSpecs({ phone }: ISpecs) {
