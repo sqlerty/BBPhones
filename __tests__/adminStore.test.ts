@@ -48,7 +48,7 @@ describe('Unit тесты 6-13: Zustand adminStore и API запросы', () =>
     it('10. createItem должен отправлять POST запрос и обновлять данные', async () => {
         useAdminStore.setState({ currentEntity: 'phones' });
         mockedAxios.post.mockResolvedValueOnce({ data: { id: '2' } });
-        mockedAxios.get.mockResolvedValueOnce({ data: [{ id: '2' }] }); // Мок для fetchData внутри create
+        mockedAxios.get.mockResolvedValueOnce({ data: [{ id: '2' }] });
 
         const success = await useAdminStore
             .getState()
