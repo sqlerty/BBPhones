@@ -43,9 +43,9 @@ export default function SearchPhones() {
                                     />
                                 </div>
                                 <Link
-                                    href={`/Phone/${phone.id}`}
+                                    href={`/Phone/${phone.slug}`}
                                     className="font-medium transition-colors hover:text-blue-500"
-                                    onClick={() => setInfoPhone(phone)}
+                                    onClick={() => setInfoPhone(phone.id)}
                                 >
                                     {phone.name}
                                 </Link>

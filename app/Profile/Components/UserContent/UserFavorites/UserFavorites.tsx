@@ -12,8 +12,8 @@ export default function UserFavorites() {
             {favoritePhones.map((phone) => (
                 <Link
                     key={phone.id}
-                    href={`/Phone/${phone.id}`}
-                    onClick={() => setInfoPhone(phone)}
+                    href={`/Phone/${phone.slug}`}
+                    onClick={() => setInfoPhone(phone.id)}
                     className="group flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 transition-all hover:border-blue-200 hover:shadow-lg sm:p-5"
                 >
                     <div className="relative h-20 w-20 shrink-0 rounded-xl bg-gray-50 p-3 sm:h-24 sm:w-24">
