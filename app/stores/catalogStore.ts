@@ -18,7 +18,7 @@ interface ICatalogStore {
     searchedPhones: PhonesWithBrand[];
     setSearch: (word: string) => void;
     infoPhone: PhonesWithBrand | null;
-    setInfoPhone: (phone: PhonesWithBrand) => void;
+    setInfoPhone: (id: string) => void;
 }
 
 interface IFilter {
@@ -78,11 +78,11 @@ const CatalogStoreSlice: StateCreator<
         }
         set({ searchedPhones: result });
     },
-    setInfoPhone: (phone) => {
+    setInfoPhone: (id) => {
         const { phones } = get();
         let res;
-        if (phone !== null) {
-            res = phones.find((p) => p.id == phone.id);
+        if (id !== null) {
+            res = phones.find((p) => p.id == id);
         }
         if (!res) {
             alert('Не удалось найти телефон!');

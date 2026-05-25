@@ -3,12 +3,13 @@ import Image from 'next/image';
 import { useCartActions } from './../../../stores/profileStore';
 import { ICartItem } from '@/app/stores/profileStore';
 import Link from 'next/link';
+import { useCatalogActions } from '@/app/stores/catalogStore';
 interface ICartPhone {
     cartPhone: ICartItem;
 }
 export default function CartPhone({ cartPhone }: ICartPhone) {
     const { removeFromCart, updateQuantity } = useCartActions();
-
+    const { setInfoPhone } = useCatalogActions();
     return (
         <div className="flex w-3xl justify-between rounded-3xl border border-gray-100 bg-white p-5 max-md:w-full">
             <div className="flex w-full gap-5 max-md:flex-col">
@@ -25,7 +26,8 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
                     <div className="flex flex-col justify-between max-md:gap-10">
                         <div className="flex flex-col gap-2">
                             <Link
-                                href={`/Phone/${cartPhone.name}`}
+                                href={`/Phone/${cartPhone.slug}`}
+                                onClick={() => setInfoPhone(cartPhone.id)}
                                 className="group"
                             >
                                 <p className="text-xs font-bold text-blue-600 uppercase">

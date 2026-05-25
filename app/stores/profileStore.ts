@@ -68,6 +68,7 @@ export interface ICartItem {
     brand?: string;
     ram: number;
     storage: number;
+    slug: string;
 }
 
 export interface ICart {
@@ -295,6 +296,7 @@ const CartSlice: StateCreator<
                       name: phone.name,
                       price: Number(phone.price),
                       image: phone.images[0],
+                      slug: phone.slug,
                       ram: phone.ram,
                       storage: phone.storage,
                       quantity: 1,

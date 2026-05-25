@@ -45,13 +45,18 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                         }`}
                     />
                 </button>
-                <Image
-                    src={phone.images[0]}
-                    width={1000}
-                    height={2000}
-                    alt="phone"
-                    className="h-full w-full object-contain transition-all group-hover:h-60"
-                />
+                <Link
+                    href={`/Phone/${phone.slug}`}
+                    onClick={() => setInfoPhone(phone.id)}
+                >
+                    <Image
+                        src={phone.images[0]}
+                        width={1000}
+                        height={2000}
+                        alt="phone"
+                        className="h-full w-full object-contain transition-all group-hover:h-60"
+                    />
+                </Link>
             </div>
             <div className="flex flex-col gap-3 bg-white p-5">
                 <div className="flex flex-col gap-2 border-b border-b-gray-100 pb-4">
@@ -60,7 +65,7 @@ export default function PhoneCard({ phone }: IPhoneCard) {
                     </p>
                     <Link
                         href={`/Phone/${phone.slug}`}
-                        onClick={() => setInfoPhone(phone)}
+                        onClick={() => setInfoPhone(phone.id)}
                     >
                         <h3 className="text-lg font-bold duration-300 group-hover:text-blue-600">
                             {phone.name}

@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { LuPackage } from 'react-icons/lu';
 import { useOrders, useOrdersLoading } from '@/app/stores/profileStore';
 import Image from 'next/image';
+import { useCatalogActions } from '@/app/stores/catalogStore';
 
 export default function UserOrders() {
+    const { setInfoPhone } = useCatalogActions();
     const orders = useOrders();
     const ordersLoading = useOrdersLoading();
     if (ordersLoading)
@@ -67,8 +69,11 @@ export default function UserOrders() {
                                 {order.orderItems?.map((item) => (
                                     <Link
                                         key={item.id}
-                                        href={`/Phone/${item.id}`}
-                                        className="group flex gap-6"
+                                        href={`/Phone/${item.phone.slug}`}
+                                        onClick={() =>
+                                            setInfoPhone(item.phone.id)
+                                        }
+                                        className="flex gap-2"
                                     >
                                         <div className="h-20 w-20 shrink-0 rounded-xl bg-gray-50 p-2">
                                             <Image
