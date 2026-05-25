@@ -1,7 +1,7 @@
 'use client';
-import { usePhones } from '@/app/stores/catalogStore';
+import { useFilterPhones } from '@/app/stores/catalogStore';
 export default function PhonesLength() {
-    const phones = usePhones();
+    const phones = useFilterPhones();
     const phonesLength = phones.length;
     return (
         <p className="font-medium text-gray-500">

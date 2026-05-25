@@ -102,9 +102,9 @@ const FilterSlice: StateCreator<
     filterPhones: [],
     categoryFilter: 'all',
     brandFilter: [],
-    priceRange: [0, 150000],
+    priceRange: [0, 200000],
 
-    sort: '',
+    sort: 'new',
     setCondition: (word) => {
         set({ condition: word });
         get().setFilterPhones();

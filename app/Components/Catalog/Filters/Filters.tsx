@@ -138,7 +138,7 @@ export default function Filters() {
                             <input
                                 type="range"
                                 min="0"
-                                max="150000"
+                                max="200000"
                                 step="5000"
                                 value={priceRange[1]}
                                 onChange={(e) =>
