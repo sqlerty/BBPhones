@@ -144,7 +144,11 @@ const ProfileAuthSlice: StateCreator<
             });
             alert(`Успех: ${data.message}`);
             set({ isAuth: true, user: data.user });
-            await Promise.all([get().fetchFavorites(), get().fetchCart()]);
+            await Promise.all([
+                get().fetchFavorites(),
+                get().fetchCart(),
+                get().fetchOrders(),
+            ]);
             router.push('/');
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
@@ -222,7 +226,7 @@ const FavoriteSlice: StateCreator<
 > = (set, get) => ({
     favoritePhones: [],
     favoritePhonesId: [],
-    activeTab: '',
+    activeTab: 'orders',
     fetchFavorites: async () => {
         try {
             const { data } = await axios.get('/api/favorites');

@@ -68,7 +68,7 @@ const adminManageSlice: StateCreator<
     data: [],
     isLoadingManage: false,
     currentEntity: 'phones',
-    adminTab: '',
+    adminTab: 'Analytics',
     setAdminTab: (tab) => {
         set({ adminTab: tab });
     },
