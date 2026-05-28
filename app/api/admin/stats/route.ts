@@ -27,6 +27,7 @@ export async function GET() {
         const productsCount = await prisma.phones.count();
 
         const paidOrders = await prisma.orders.findMany({
+            where: { status: 'PAID' },
             include: {
                 orderItems: {
                     include: {
