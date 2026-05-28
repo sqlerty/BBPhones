@@ -9,6 +9,12 @@ export default function UserOrders() {
     const { setInfoPhone } = useCatalogActions();
     const orders = useOrders();
     const ordersLoading = useOrdersLoading();
+    const statusTranslation: Record<string, string> = {
+        PENDING: 'Ожидает оплаты',
+        PAID: 'Оплачен',
+        CANCELLED: 'Отменен',
+        CANCELED: 'Отменен', // На случай опечатки в БД
+    };
     if (ordersLoading)
         return <div className="p-10 text-center">Загрузка истории...</div>;
     if (orders.length === 0)
@@ -63,7 +69,8 @@ export default function UserOrders() {
                                 </div>
                             </div>
                             <div className="rounded-xl bg-emerald-100 px-4 py-1.5 text-sm font-bold text-emerald-800 shadow-sm shadow-emerald-900/5">
-                                {order.status ? 'Ожидает оплаты...' : 'Оплачен'}
+                                {statusTranslation[order.status] ||
+                                    order.status}
                             </div>
                         </div>
 
