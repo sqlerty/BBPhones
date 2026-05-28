@@ -16,6 +16,19 @@ export const userSchema = z.object({
     name: z.string().min(2, 'Имя слишком короткое'),
     role: z.enum(['USER', 'ADMIN']),
 });
+export const updateProfileSchema = z.object({
+    name: z.string().min(2, 'Имя слишком короткое').optional(),
+    phone: z
+        .string()
+        .min(10, 'Телефон должен быть не менее 10 символов')
+        .optional(),
+    address: z.string().min(5, 'Адрес слишком короткий').optional(),
+});
+
+export const orderCompleteSchema = z.object({
+    phone: z.string().min(10, 'Телефон должен быть не менее 10 символов'),
+    address: z.string().min(5, 'Адрес слишком короткий'),
+});
 
 export const brandSchema = z.object({
     name: z.string().min(2, 'Название слишком короткое'),

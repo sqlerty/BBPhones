@@ -16,7 +16,7 @@ export default function Contacts() {
                             Телефон
                         </span>
                         <p className="font-semibold text-gray-900">
-                            +7 (999) 123-45-67
+                            {user?.phone || 'Не указан'}
                         </p>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ export default function Contacts() {
                             Адрес доставки
                         </span>
                         <p className="font-semibold text-gray-900">
-                            г. Москва, ул. Ленина, д. 10, кв. 25
+                            {user?.address || 'Не указан'}
                         </p>
                     </div>
                 </div>

@@ -24,6 +24,8 @@ export async function GET() {
                 name: true,
                 role: true,
                 avatarUrl: true,
+                phone: true,
+                address: true,
             },
         });
         if (!user)

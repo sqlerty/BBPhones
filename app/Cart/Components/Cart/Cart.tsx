@@ -1,14 +1,14 @@
 'use client';
 import { LuTrash2 } from 'react-icons/lu';
 import CartPhone from './CartPhone/CartPhone';
-import OrderDetails from './OrderDetails/OrderDetails';
+import OrderDetails from '../OrderDetails/OrderDetails';
 import {
     useCart,
     useCartActions,
     useCartAmount,
     useCartCount,
 } from '@/app/stores/profileStore';
-import VoidCart from './VoidCart';
+import VoidCart from '../VoidCart';
 
 export default function Cart() {
     const cartPhones = useCart();
@@ -30,7 +30,7 @@ export default function Cart() {
                     </div>
                     <button
                         onClick={() => clearCart()}
-                        className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2"
+                        className="flex cursor-pointer items-center gap-2 rounded-xl bg-gray-100 px-4 py-2"
                     >
                         <LuTrash2 className="h-4 w-4" />
                         Очистить всё

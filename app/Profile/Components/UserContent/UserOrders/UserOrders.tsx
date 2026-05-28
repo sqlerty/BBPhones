@@ -62,6 +62,9 @@ export default function UserOrders() {
                                     № SM-{order.id}
                                 </div>
                             </div>
+                            <div className="rounded-xl bg-emerald-100 px-4 py-1.5 text-sm font-bold text-emerald-800 shadow-sm shadow-emerald-900/5">
+                                {order.status ? 'Ожидает оплаты...' : 'Оплачен'}
+                            </div>
                         </div>
 
                         <div className="p-6">

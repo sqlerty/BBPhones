@@ -1,6 +1,6 @@
 import { LuTrash2, LuMinus, LuPlus } from 'react-icons/lu';
 import Image from 'next/image';
-import { useCartActions } from './../../../stores/profileStore';
+import { useCartActions } from '../../../../stores/profileStore';
 import { ICartItem } from '@/app/stores/profileStore';
 import Link from 'next/link';
 import { useCatalogActions } from '@/app/stores/catalogStore';
@@ -49,7 +49,7 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
                         <div className="flex max-w-30 items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-1">
                             <button
                                 onClick={() => updateQuantity(cartPhone.id, -1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm disabled:opacity-50"
+                                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm disabled:opacity-50"
                             >
                                 <LuMinus className="h-4 w-4" />
                             </button>
@@ -58,7 +58,7 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
                             </span>
                             <button
                                 onClick={() => updateQuantity(cartPhone.id, 1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm"
+                                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-gray-600 transition-all hover:bg-white hover:shadow-sm"
                             >
                                 <LuPlus className="h-4 w-4" />
                             </button>
@@ -67,7 +67,7 @@ export default function CartPhone({ cartPhone }: ICartPhone) {
                     <div className="flex flex-col items-end justify-between text-right">
                         <button
                             onClick={() => removeFromCart(cartPhone.id)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
+                            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-50 text-gray-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
                         >
                             <LuTrash2 className="h-4 w-4" />
                         </button>

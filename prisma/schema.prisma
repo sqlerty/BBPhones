@@ -13,6 +13,7 @@ enum UserRole {
 
 enum OrderStatus {
   PENDING
+  PAID
   PROCESSING
   SHIPPED
   DELIVERED
@@ -27,6 +28,8 @@ model Users {
   email      String     @unique
   password   String     
   name       String?
+  phone      String?
+  address    String?
   avatarUrl  String?    @map("avatar_url")
   role       UserRole   @default(USER)
   createdAt  DateTime   @default(now()) @map("created_at")

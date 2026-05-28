@@ -14,6 +14,8 @@ export async function POST(req: Request) {
             );
         const formData = await req.formData();
         const name = formData.get('name') as string;
+        const phone = formData.get('phone') as string;
+        const address = formData.get('address') as string;
         const file = formData.get('avatar') as File | null;
         let avatarUrl = undefined;
         if (file) {
@@ -32,6 +34,8 @@ export async function POST(req: Request) {
             data: {
                 name: name || undefined,
                 avatarUrl: avatarUrl || undefined,
+                phone: phone || undefined,
+                address: address || undefined,
             },
         });
 

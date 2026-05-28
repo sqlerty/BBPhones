@@ -11,6 +11,8 @@ interface IUser {
     avatarUrl: string;
     name: string;
     role: string;
+    phone?: string;
+    address?: string;
 }
 interface IProfile {
     handleAuth: (
@@ -80,7 +82,7 @@ export interface ICart {
     removeFromCart: (phoneId: string) => Promise<void>;
     updateQuantity: (phoneId: string, delta: number) => Promise<void>;
     clearCart: () => Promise<void>;
-    createOrder: (addres: string, phone: string) => Promise<void>;
+    createOrder: (phone: string, address: string) => Promise<void>;
 }
 
 export interface IOrder {
@@ -98,6 +100,8 @@ export interface IOrder {
 
 interface IOrderStore {
     orders: IOrder[];
+    step: 'cart' | 'form';
+    setStep: (step: 'cart' | 'form') => void;
     isOrdersLoading: boolean;
     fetchOrders: () => Promise<void>;
 }
@@ -371,7 +375,7 @@ const CartSlice: StateCreator<
             }
         }
     },
-    createOrder: async (address, phone) => {
+    createOrder: async (phone, address) => {
         try {
             const { data } = await axios.post('/api/orders', {
                 address,
@@ -379,11 +383,13 @@ const CartSlice: StateCreator<
             });
 
             if (data.confirmationUrl) {
+                get().clearCart();
                 window.location.href = data.confirmationUrl;
             }
-            await get().clearCart();
         } catch {
-            alert('Не удалось провести платеж!');
+            alert(
+                'Не удалось сформировать заказ! Пожалуйста, попробуйте позже.'
+            );
         }
     },
 });
@@ -395,6 +401,10 @@ const OrderSlice: StateCreator<
     IOrderStore
 > = (set) => ({
     orders: [],
+    step: 'cart',
+    setStep: (step) => {
+        set({ step });
+    },
     isOrdersLoading: false,
     fetchOrders: async () => {
         set({ isOrdersLoading: true });
@@ -429,6 +439,7 @@ export const useProfileStore = create<IProfileStore>()(
                     orders: state.orders,
                     activeTab: state.activeTab,
                     isAdmin: state.isAdmin,
+                    step: state.step,
                 }),
             }
         )
@@ -480,6 +491,8 @@ export const useOrderActions = () => {
 
 export const useIsAdmin = () => useProfileStore((state) => state.isAdmin);
 
+export const useStep = () => useProfileStore((state) => state.step);
+
 export const useAuthActions = () => {
     const { handleAuth, handleReg, handleLogout, updateProfile, setAdmin } =
         useProfileStore.getState();
@@ -494,6 +507,7 @@ export const useCartActions = () => {
         clearCart,
         fetchCart,
         createOrder,
+        setStep,
     } = useProfileStore.getState();
     return {
         addToCart,
@@ -502,6 +516,7 @@ export const useCartActions = () => {
         clearCart,
         fetchCart,
         createOrder,
+        setStep,
     };
 };
 

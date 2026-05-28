@@ -4,11 +4,13 @@ import { useAuthActions, useUser } from '@/app/stores/profileStore';
 import { IoMdClose } from 'react-icons/io';
 import { useModalActions } from '@/app/stores/modalStore';
 import Image from 'next/image';
-
+import { updateProfileSchema } from '@/lib/validation';
 export default function ProfileModal() {
     const user = useUser();
     const [name, setName] = useState(user?.name || '');
     const [file, setFile] = useState<File | null>(null);
+    const [phone, setPhone] = useState(user?.phone || '');
+    const [address, setAddress] = useState(user?.address || '');
     const [preview, setPreview] = useState(user?.avatarUrl || '');
     const { updateProfile } = useAuthActions();
     const { closeModal } = useModalActions();
@@ -20,8 +22,27 @@ export default function ProfileModal() {
         }
     };
     const handleSave = async () => {
+        const validation = updateProfileSchema.safeParse({
+            name,
+            phone,
+            address,
+        });
+        if (!validation.success) {
+            const fieldErrors = validation.error.flatten().fieldErrors;
+
+            const errorMessages = Object.values(fieldErrors)
+                .flat()
+                .map((err) => `• ${err}`)
+                .join('\n');
+            alert(
+                `Пожалуйста, исправьте следующие ошибки:\n\n${errorMessages}`
+            );
+            return;
+        }
         const formData = new FormData();
         formData.append('name', name);
+        formData.append('phone', phone);
+        formData.append('address', address);
         if (file) formData.append('avatar', file);
         await updateProfile(formData);
         closeModal();
@@ -77,6 +98,28 @@ export default function ProfileModal() {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            className="mt-1 w-full rounded-xl bg-gray-50 p-3 transition-all outline-none focus:ring-2 focus:ring-purple-200"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-500">
+                            Ваш телефон
+                        </label>
+                        <input
+                            type="text"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="mt-1 w-full rounded-xl bg-gray-50 p-3 transition-all outline-none focus:ring-2 focus:ring-purple-200"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-500">
+                            Ваш адрес
+                        </label>
+                        <input
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
                             className="mt-1 w-full rounded-xl bg-gray-50 p-3 transition-all outline-none focus:ring-2 focus:ring-purple-200"
                         />
                     </div>

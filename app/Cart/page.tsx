@@ -1,9 +1,9 @@
-import Cart from './Components/Cart';
+import Main from './Components/Main';
 
 export default function Home() {
     return (
         <div>
-            <Cart />
+            <Main />
         </div>
     );
 }

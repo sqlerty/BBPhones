@@ -1,13 +1,33 @@
-import Link from 'next/link';
 import { LuShieldCheck, LuLock } from 'react-icons/lu';
 import { useCartAmount, useCartActions } from '@/app/stores/profileStore';
+import { orderCompleteSchema } from '@/lib/validation';
+interface IOrderDetails {
+    phone: string;
+    address: string;
+}
 
-export default function OrderDetails() {
+export default function OrderDetailsFinish({ phone, address }: IOrderDetails) {
     const cartAmount = useCartAmount();
-    const { setStep } = useCartActions();
+    const { createOrder, setStep } = useCartActions();
+    const handleSave = async (phone: string, address: string) => {
+        const validation = orderCompleteSchema.safeParse({ phone, address });
+        if (!validation.success) {
+            const fieldErrors = validation.error.flatten().fieldErrors;
 
+            const errorMessages = Object.values(fieldErrors)
+                .flat()
+                .map((err) => `• ${err}`)
+                .join('\n');
+            alert(
+                `Пожалуйста, исправьте следующие ошибки:\n\n${errorMessages}`
+            );
+            return;
+        }
+        await createOrder(phone, address);
+        setStep('cart');
+    };
     return (
-        <div className="sticky top-28 flex h-1/12 w-full flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20">
+        <div className="sticky top-28 flex h-1/12 w-3xl flex-col gap-5 divide-y divide-white/10 rounded-3xl bg-gray-900 p-8 shadow-2xl shadow-gray-900/20 max-md:w-full">
             <div className="pb-5">
                 <h2 className="mb-6 text-xl font-bold text-white">
                     Детали заказа
@@ -34,17 +54,11 @@ export default function OrderDetails() {
                 </div>
                 <div className="mt-8 flex flex-col gap-4">
                     <button
-                        onClick={() => setStep('form')}
-                        className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-500 active:scale-95"
+                        onClick={() => handleSave(phone, address)}
+                        className="w-full cursor-pointer rounded-xl bg-emerald-600 py-4 font-bold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-emerald-500 active:scale-95"
                     >
-                        Перейти к оформлению
+                        Оплатить заказ
                     </button>
-                    <Link
-                        href="/"
-                        className="text-center text-sm font-medium text-gray-400 transition-colors hover:text-white"
-                    >
-                        Продолжить покупки
-                    </Link>
                 </div>
             </div>
             <div className="flex flex-col gap-3">

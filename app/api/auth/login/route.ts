@@ -35,6 +35,8 @@ export async function POST(req: Request) {
                 name: user.name,
                 role: user.role,
                 avatarUrl: user.avatarUrl,
+                phone: user.phone,
+                address: user.address,
             },
         });
         response.cookies.set('auth_token', token, {
