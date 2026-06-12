@@ -71,6 +71,7 @@ export interface ICartItem {
     ram: number;
     storage: number;
     slug: string;
+    stock: number;
 }
 
 export interface ICart {
@@ -292,7 +293,9 @@ const CartSlice: StateCreator<
         const { cart, isAuth } = get();
         if (!isAuth) return alert('Войдите в аккаунт');
         const existing = cart.find((i) => i.id === phone.id);
-
+        if (existing && existing.quantity >= phone.stock) {
+            return alert(`Извините, доступно только ${phone.stock} шт.`);
+        }
         const newCart = existing
             ? cart.map((i) =>
                   i.id === phone.id ? { ...i, quantity: i.quantity + 1 } : i
@@ -308,21 +311,19 @@ const CartSlice: StateCreator<
                       ram: phone.ram,
                       storage: phone.storage,
                       quantity: 1,
+                      stock: phone.stock,
                   },
               ];
 
         set({ cart: newCart });
-
-        if (isAuth) {
-            try {
-                const nextQty = existing ? existing.quantity + 1 : 1;
-                await axios.post('/api/cart', {
-                    phoneId: phone.id,
-                    quantity: nextQty,
-                });
-            } catch {
-                console.error('Ошибка синхронизации корзины');
-            }
+        try {
+            const nextQty = existing ? existing.quantity + 1 : 1;
+            await axios.post('/api/cart', {
+                phoneId: phone.id,
+                quantity: nextQty,
+            });
+        } catch {
+            console.error('Ошибка синхронизации корзины');
         }
     },
 
@@ -332,6 +333,9 @@ const CartSlice: StateCreator<
         if (!item) return;
 
         const newQty = Math.max(1, item.quantity + delta);
+        if (item.stock && newQty > item.stock) {
+            return alert(`Извините, доступно только ${item.stock} шт.`);
+        }
         const newCart = cart.map((i) =>
             i.id === id ? { ...i, quantity: newQty } : i
         );

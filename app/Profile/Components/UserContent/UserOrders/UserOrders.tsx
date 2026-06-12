@@ -13,8 +13,15 @@ export default function UserOrders() {
         PENDING: 'Ожидает оплаты',
         PAID: 'Оплачен',
         CANCELLED: 'Отменен',
-        CANCELED: 'Отменен', // На случай опечатки в БД
+        CANCELED: 'Отменен',
     };
+    const statusColors: Record<string, string> = {
+        PENDING: 'bg-blue-100 text-blue-800 shadow-blue-900/5',
+        PAID: 'bg-emerald-100 text-emerald-800 shadow-emerald-900/5',
+        CANCELLED: 'bg-red-100 text-red-800 shadow-red-900/5',
+        CANCELED: 'bg-red-100 text-red-800 shadow-red-900/5',
+    };
+    const fallbackColor = 'bg-gray-100 text-gray-800 shadow-gray-900/5';
     if (ordersLoading)
         return <div className="p-10 text-center">Загрузка истории...</div>;
     if (orders.length === 0)
@@ -68,7 +75,9 @@ export default function UserOrders() {
                                     № SM-{order.id}
                                 </div>
                             </div>
-                            <div className="rounded-xl bg-emerald-100 px-4 py-1.5 text-sm font-bold text-emerald-800 shadow-sm shadow-emerald-900/5">
+                            <div
+                                className={`rounded-xl px-4 py-1.5 text-sm font-bold ${statusColors[order.status] || fallbackColor}`}
+                            >
                                 {statusTranslation[order.status] ||
                                     order.status}
                             </div>
