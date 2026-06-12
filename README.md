@@ -52,12 +52,13 @@
     git clone [https://github.com/your-username/bbphones.git](https://github.com/your-username/bbphones.git)
     ```
 
-2. **Перейдите в папку проекта:**
+### 2. **Перейдите в папку проекта:**
    ```bash
    cd bbphones
    ```
      
-3. **Настройка переменных окружения**
+### 3. **Настройка переменных окружения**
+
 Создайте файл .env в корневой директории проекта и добавьте следующие ключи:
     ```bash
     DATABASE_URL="postgresql://user:password@localhost:5432/bbphones?schema=public"
@@ -66,12 +67,12 @@
     YOOKASSA_SECRET_KEY="your_secret_key"
     ```
 
-4. **Инициализация базы данных**
+### 4. **Инициализация базы данных**
    ```bash
    npx prisma migrate dev --name init
    ```
 
-5. **Запуск сервера разработки**
+### 5. **Запуск сервера разработки**
    ```bash
    npm run dev
    ```
