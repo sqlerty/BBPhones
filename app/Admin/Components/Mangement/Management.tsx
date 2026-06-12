@@ -26,7 +26,7 @@ export default function Management() {
     return (
         <div className="space-y-10">
             <div className="pt-10">
-                <div className="flex gap-5 max-md:flex-wrap max-md:justify-between">
+                <div className="flex gap-5 max-md:grid max-md:grid-cols-2">
                     {managementData.map((item) => (
                         <button
                             className={`${item.entity === entity ? 'bg-blue-600' : 'bg-black'} group flex cursor-pointer items-center gap-2 rounded-2xl px-6 py-3 font-medium text-white shadow-xl shadow-gray-900/10 transition-colors duration-300 ease-in-out hover:bg-blue-600`}
