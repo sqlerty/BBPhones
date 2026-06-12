@@ -60,6 +60,7 @@
 ### 3. **Настройка переменных окружения**
 
 Создайте файл .env в корневой директории проекта и добавьте следующие ключи:
+
     ```bash
     DATABASE_URL="postgresql://user:password@localhost:5432/bbphones?schema=public"
     JWT_SECRET="your_super_secret_jwt_key"
